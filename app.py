@@ -53,7 +53,7 @@ def main():
         elif questionType == "Slider":
             quizLabel.config(text="You selected: " + str(ans.get()))
         elif questionType == "Checkboxes":
-            quizLabel.config(text="You selected: " + " ".join(answer))
+            quizLabel.config(text="You selected: ".join(answer))
 
     def goNext(index):
         if index < len(quizFrames) - 1:
@@ -200,11 +200,9 @@ def main():
                 radio_button = tk.Radiobutton(quiz, text=answer, font=("Lucida Sans", 12), variable=ans, value=answer, command=selectOption(question['questionType']))
                 radio_button.pack(anchor='w', pady=5, padx=20)
         elif question['questionType'] == "Checkboxes":
-            selected = []
             for answer in question['answer']:
-                checkbox = tk.Checkbutton(quiz, text=answer, font=("Lucida Sans", 12), variable=answer, command=selectOption(question['questionType']))
+                checkbox = tk.Checkbutton(quiz, text=answer, font=("Lucida Sans", 12), variable=ans, command=selectOption(question['questionType']))
                 checkbox.pack(anchor='w', pady=5, padx=20)
-                selected.append(ans)
         elif question['questionType'] == "Slider":
             # sliderLabel = tk.Label(quiz, text="Slider questions not ready yet", font=("Lucida Sans", 12))
             # sliderLabel.pack(pady=10)
