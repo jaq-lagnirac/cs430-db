@@ -2,3 +2,5 @@ songs_normalize.csv
 archive.zip
 .venv/
 config.json
+.env
+*.pyc
