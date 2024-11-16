@@ -24,21 +24,16 @@ def find_all(querys):
   except:
     print("Something went wrong with the Query:")
     print("1.Did the user answer the questions?")
+    print("2.Did the connection string work?")
     
   
 #Everything else handles the mongodb connection
-'''
-Need to setup a .env where: 
-  MONGODB_USER is the user for database
-  MONGODB_USER_PWD is the password for user
-'''
-load_dotenv(find_dotenv())
-user = os.environ.get("MONGODB_USER")
-password = os.environ.get("MONGODB_USER_PWD")
 
+#Need to setup a .env where for the connection string
+load_dotenv(find_dotenv())
 try:
   #Connection to Database
-  connection_string = f"mongodb+srv://{user}:{password}@cs430-db.67wen.mongodb.net/"
+  connection_string = os.environ.get("CONNECTION_STRING")
   client = MongoClient(connection_string)
   #Access the data
   #dbs = client.list_database_names()
