@@ -1,4 +1,4 @@
-import tkinter as tk 
+import random
 
 answerToGenre = {
     "Dragon": "pop",
@@ -45,7 +45,6 @@ def parseRadioValues(radioChosen):
         storedVal = val.get()
         parseRadio.append(storedVal.split(","))
     
-
 def makeQuery():
     try:
         query = {
@@ -64,6 +63,15 @@ def makeQuery():
         print(e)
         print("The user needs to answer all the radio buttons!")
     return query
+
+def getOneRandomSong(songList):
+  MININDEX = 0
+  MAXINDEX = 1999
+  
+  allSongs = songList
+  randomNum = random.randrange(MININDEX, MAXINDEX)
+
+  return(allSongs[randomNum])
 
 
 

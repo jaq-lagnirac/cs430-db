@@ -1,8 +1,7 @@
-from dotenv import load_dotenv, find_dotenv
 import os
 import pprint
+from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
-import functions as func
 
 
 def printQuery(query):
@@ -17,6 +16,8 @@ def find_all(querys):
     if count == 0:
       print("We've determined that our dataset does not fit your taste of music. Sadly, we cannot give you any recommendations.")
     else:
+      #Only used for printing the songs to terminal (TEMP)
+      printer = pprint.PrettyPrinter()
       for song in songs:
         printer.pprint(song)
     print("The total number of documents is: ", count)
@@ -26,7 +27,11 @@ def find_all(querys):
     print("1.Did the user answer the questions?")
     print("2.Did the connection string work?")
     
-  
+def getAllSongs():
+  songs = collection.find()
+  allresults = list(songs)
+  return allresults
+
 #Everything else handles the mongodb connection
 
 #Need to setup a .env where for the connection string
@@ -43,8 +48,7 @@ try:
 except Exception as e:
   print(e)
 
-#Only used for printing the songs to terminal (TEMP)
-printer = pprint.PrettyPrinter()
+
 
   
 

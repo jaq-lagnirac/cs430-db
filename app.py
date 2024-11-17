@@ -200,9 +200,7 @@ def main():
     #Store the values for the checkboxes
     checkVar = []
     
-    #Store the values for the slider 
-    sliderYear = 0
-    
+
     #Store the values for the radiobuttons
     radioChosenAnswers = []
     
@@ -275,7 +273,11 @@ def main():
     #SEARCH COMPONENTS
 
     #RANDOM SONG COMPONENTS
+    allSongs = mdb.getAllSongs()
+    #Stores random song object to use as recommendation
+    randoSong = func.getOneRandomSong(allSongs)
 
+    
     #PLAYLIST COMPONENTS
 
     # Show Home page initially
