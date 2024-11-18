@@ -72,7 +72,3 @@ def getOneRandomSong(songList):
   randomNum = random.randrange(MININDEX, MAXINDEX)
 
   return(allSongs[randomNum])
-
-
-
-

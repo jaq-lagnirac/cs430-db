@@ -83,7 +83,25 @@ def main():
         #Access by using for loop when needed and each song is a dictionary with the fields being the keys.
         songs = mdb.find_all(query)
         print("----Works-----")
-        
+    
+    
+    #Functions in the Search Frame   
+    def addDropdownGenres():
+        addGenreSearch.add(chosenGenre.get())
+        print(addGenreSearch)
+    
+    def deleteList():
+        addGenreSearch.clear()
+        print(addGenreSearch)
+    
+    #Submit button for song and artist search
+    def submit():
+        print(songSearched.get())
+        print(artistSearched.get())
+    
+    #Submit button for Song options in Search WIP:
+    def submitSearchOptions():
+        pass
     
     
     root = tk.Tk()
@@ -269,9 +287,139 @@ def main():
         nextButton.pack(side="right", padx=75, pady=5)
         backButton.pack(side="left", padx=75, pady=5)
         
+ 
+    #The options avaliable for the Search Page
+    searchInputComponents = [
+        {
+          "id": 1,
+          "genre": ["pop","Folk/Acoustic","jazz","metal",
+                    "R&B","blues","World/Traditional","country",
+                    "easy listening","rock","Dance/Electronic",
+                    "hip hop","latin","classical"]  
+        },
+        {
+            "id": 2,
+            "year": ["Min Year", "Max Year"] 
+        },
+        {
+            "id": 3,
+            "length" : ["Min Length:", "Max Length"]
+        },
+        {
+            "id": 4,
+            "PopularityandDance": ["Max Popularity", "Max Danceabilty"]
+        },
+        {
+            "id": 5,
+            "EnergyandTempo": ["Max Energy", "Max Tempo"]
+        }
+    ]
     
-    #SEARCH COMPONENTS
+    
+    
+    #SEARCH COMPONENTS    
+    searchFrameLabel = tk.Label(search, text="Search:", font=("Lucida Sans", 12))
+    searchFrameLabel.pack()
+    
+    homeButtonAtSearch = tk.Button(search, text="HOME", command= showHomePage)
+    homeButtonAtSearch.pack()
+    
+    #Holds the genres the user wants to search
+    addGenreSearch = set()
+    
+    # Creates the different search property inputs
+    for components in searchInputComponents:
+        # Create a frame for each id group
+        idFrame = tk.Frame(search)
+        idFrame.pack(fill="x", pady=5)  # Stack vertically with padding
+        
+        #DropDown
+        if components["id"] == 1:
+            chosenGenreLabel = tk.Label(idFrame, text="Choose Genre(s)")
+            chosenGenreLabel.pack(side=tk.LEFT)
+            chosenGenre = tk.StringVar()
+            dropGenre = tk.OptionMenu(idFrame, chosenGenre, *components["genre"] )
+            dropGenre.pack(side=tk.LEFT)
+            
+            addGenre = tk.Button(idFrame, text="Add Genre", command=addDropdownGenres)
+            addGenre.pack()
+            deleteGenreList = tk.Button(idFrame, text="Delete List", command=deleteList)
+            deleteGenreList.pack()
+        #Text inputs    
+        elif components["id"] == 2:
+            for x in components["year"]:
+                inputYear = tk.IntVar()
 
+                # Label for the year
+                label = tk.Label(idFrame, text=x)
+                label.pack(side=tk.LEFT, padx=5)
+
+                # Entry for the year
+                entryYear = tk.Entry(idFrame, textvariable=inputYear)
+                entryYear.pack(side=tk.LEFT, padx=5)
+        #Text inputs
+        elif components["id"] == 3:
+            for x in components["length"]:
+                inputLength = tk.IntVar()
+
+                # Label for the length
+                label = tk.Label(idFrame, text=x)
+                label.pack(side=tk.LEFT, padx=5)
+
+                # Entry for the length
+                entryLength = tk.Entry(idFrame, textvariable=inputLength)
+                entryLength.pack(side=tk.LEFT, padx=5)
+        #Text inputs       
+        elif components["id"] == 4:
+            for x in components["PopularityandDance"]:
+                inputLength = tk.IntVar()
+
+                # Label for the length
+                label = tk.Label(idFrame, text=x)
+                label.pack(side=tk.LEFT, padx=5)
+
+                # Entry for the length
+                entryLength = tk.Entry(idFrame, textvariable=inputLength)
+                entryLength.pack(side=tk.LEFT, padx=5)
+        #Text inputs
+        else:
+            for x in components["EnergyandTempo"]:
+                inputLength = tk.IntVar()
+
+                # Label for the length
+                label = tk.Label(idFrame, text=x)
+                label.pack(side=tk.LEFT, padx=5)
+
+                # Entry for the length
+                entryLength = tk.Entry(idFrame, textvariable=inputLength)
+                entryLength.pack(side=tk.LEFT, padx=5)
+    
+    #Submit Button for the options
+    searchOptionsButton = tk.Button(search, text="Submit", command=submitSearchOptions)
+    searchOptionsButton.pack()
+    
+    #Need to add func to only search song or artist not both
+
+    songSearched = tk.StringVar()
+    artistSearched = tk.StringVar()
+    
+    #Search Box for Song
+    songSearchLabel = tk.Label(search, text="Search Song")
+    songSearchLabel.pack()
+    entrySong = tk.Entry(search, textvariable=songSearched)
+    entrySong.pack()
+    
+    #Song Box for Artist
+    artistSearchLabel = tk.Label(search, text="Search Artist")
+    artistSearchLabel.pack()
+    entryArtist = tk.Entry(search, textvariable=artistSearched)
+    entryArtist.pack()
+    
+    #Submit Button for song and artist search box
+    buttonSearched = tk.Button(search, text="Submit", command=submit)
+    buttonSearched.pack()
+ 
+ 
     #RANDOM SONG COMPONENTS
     allSongs = mdb.getAllSongs()
     #Stores random song object to use as recommendation
