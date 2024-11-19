@@ -53,8 +53,27 @@ def main():
             quizLabel.config(text="You selected: " + str(ans.get()))
         elif questionType == "Slider":
             quizLabel.config(text="You selected: " + str(ans.get()))
-        elif questionType == "Checkboxes":
-            quizLabel.config(text="You selected: ".join(answer))
+
+        #Add to list of calculations and calculate at end
+        # if selectedAnswers[index]:
+        #     selectedAnswers[index] = str(ans.get())
+        # else:
+        #     selectedAnswers.append(str(ans.get()))
+
+    def selectCheckbox(cVariables):
+        labelString = "You selected: \n"
+        selectedChecks = []
+        for index, var in enumerate(cVariables):
+            if var.get():
+                labelString += str(question["answer"][index]) + "\n"
+                selectedChecks.append(question["answer"][index])
+        quizLabel.config(text=labelString)
+
+        #Add to list of calculations and calculate at end
+        # if selectedAnswers[index]:
+        #     selectedAnswers[index] = selectedChecks
+        # else:
+        #     selectedAnswers.append(selectedChecks)
 
     def goNext(index):
         if index < len(quizFrames) - 1:
@@ -231,8 +250,10 @@ def main():
         
         #Add frame
         quiz = tk.Frame(root)
-        question_label = tk.Label(quiz, text=question['question'], font=("Georgia", 14))
-        question_label.pack(anchor='w', pady=20, padx=20)
+        quizTitle = tk.Label(quiz, text="Quiz", font=("Georgia", 25, "bold"))
+        quizTitle.pack(pady=5, padx=20)
+        questionLabel = tk.Label(quiz, text=("Q" + str(questions.index(question) + 1) + ". " + question['question']), font=("Lucida Sans", 14), width = 60)
+        questionLabel.pack(anchor='w', pady=20, padx=20)
 
         quizLabel = tk.Label(quiz, text="Please make a selection", font=("Lucida Sans", 12))
         counter = 0 
@@ -276,7 +297,6 @@ def main():
             submitbutton = tk.Button(quiz, text="Submit the Year", command=lambda: func.updateYear(slider))
             submitbutton.pack()
             
-        
         # Show answer
         quizLabel.pack(pady=10)
         quizFrames.append(quiz)
