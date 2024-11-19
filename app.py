@@ -52,8 +52,27 @@ def main():
             quizLabel.config(text="You selected: " + str(ans.get()))
         elif questionType == "Slider":
             quizLabel.config(text="You selected: " + str(ans.get()))
-        elif questionType == "Checkboxes":
-            quizLabel.config(text="You selected: ".join(answer))
+
+        #Add to list of calculations and calculate at end
+        # if selectedAnswers[index]:
+        #     selectedAnswers[index] = str(ans.get())
+        # else:
+        #     selectedAnswers.append(str(ans.get()))
+
+    def selectCheckbox(cVariables):
+        labelString = "You selected: \n"
+        selectedChecks = []
+        for index, var in enumerate(cVariables):
+            if var.get():
+                labelString += str(question["answer"][index]) + "\n"
+                selectedChecks.append(question["answer"][index])
+        quizLabel.config(text=labelString)
+
+        #Add to list of calculations and calculate at end
+        # if selectedAnswers[index]:
+        #     selectedAnswers[index] = selectedChecks
+        # else:
+        #     selectedAnswers.append(selectedChecks)
 
     def goNext(index):
         if index < len(quizFrames) - 1:
@@ -102,14 +121,14 @@ def main():
     minNum = -10000
     questions = [
         {
-            "question": "Which of the following would you like to be real? (You can choose more than one)",
+            "question": "Which of the following would you like to be real?\n(You can choose more than one)",
             "questionType": "Checkboxes",
             "answer": ["Dragon", "Unicorn", "Mermaid", "Fairy", "Goblin", "Troll", "Phoenix"],
             "category": "Genre",
             "attribute": ["Pop", "Folk/Acoustic", "Jazz", "Metal", "R&B", "Blues", "World/Traditional"]
         },
         {
-            "question": "If you could time travel, where would you go? (You can choose more than one)",
+            "question": "If you could time travel, where would you go?\n(You can choose more than one)",
             "questionType": "Checkboxes",
             "answer": ["Dinosaur age", "Ancient Egypt", "Medieval Europe", "Future dystopia", "Pirate era", "Space exploration", "Fantasy world"],
             "category": "Genre",
@@ -151,14 +170,14 @@ def main():
             "attribute": [np.arange(0.2, maxNum), np.arange(0.2, 0.7), np.arange(0.2, 1), np.arange(0.3, maxNum), np.arange(minNum, 0.5)]
         },
         {
-            "question": "Out of these options, which one would you choose to wake you up for the rest of your life? (They could happen at any time)",
+            "question": "Out of these options, which one would you choose\nto wake you up for the rest of your life?\n(They could happen at any time)",
             "questionType": "Radiobuttons",
             "answer": ["Standard alarm sound", "Metal Pipe falling sound effect", "Fire Alarm"],
             "category": "Speechness",
             "attribute": [] #How to set attributes here?
         },
         {
-            "question": "Imagine you are talking with someone, then you zone out. How would you respond?",
+            "question": "Imagine you are talking with someone,\nthen you zone out. How would you respond?",
             "questionType": "Radiobuttons",
             "answer": ["Huh", "What", "Can you say that again", "Respond with “Yea” while nodding your head and pretend you heard them"],
             "category": "Genre",
@@ -180,6 +199,8 @@ def main():
         },
     ]
 
+    selectedAnswers = []
+
     #Create frames for each question
     quizFrames = []
 
@@ -189,24 +210,31 @@ def main():
 
         #Add frame
         quiz = tk.Frame(root)
-        question_label = tk.Label(quiz, text=question['question'], font=("Georgia", 14))
-        question_label.pack(anchor='w', pady=20, padx=20)
+        quizTitle = tk.Label(quiz, text="Quiz", font=("Georgia", 25, "bold"))
+        quizTitle.pack(pady=5, padx=20)
+        questionLabel = tk.Label(quiz, text=("Q" + str(questions.index(question) + 1) + ". " + question['question']), font=("Lucida Sans", 14), width = 60)
+        questionLabel.pack(anchor='w', pady=20, padx=20)
 
         quizLabel = tk.Label(quiz, text="Please make a selection", font=("Lucida Sans", 12))
 
         #if radio button:
         if question['questionType'] == "Radiobuttons":
             for answer in question['answer']:
-                radio_button = tk.Radiobutton(quiz, text=answer, font=("Lucida Sans", 12), variable=ans, value=answer, command=selectOption(question['questionType']))
+                radio_button = tk.Radiobutton(quiz, text=answer, font=("Lucida Sans", 12), variable=ans, value=answer, command=lambda: selectOption(question['questionType']))
                 radio_button.pack(anchor='w', pady=5, padx=20)
+
         elif question['questionType'] == "Checkboxes":
-            for answer in question['answer']:
-                checkbox = tk.Checkbutton(quiz, text=answer, font=("Lucida Sans", 12), variable=ans, command=selectOption(question['questionType']))
+            checkboxVariables = []
+            for index, answer in enumerate(question['answer']):
+                ans = tk.BooleanVar()
+                checkboxVariables.append(ans)
+                checkbox = tk.Checkbutton(quiz, text=answer, font=("Lucida Sans", 12), variable=checkboxVariables[index], command=lambda: selectCheckbox(checkboxVariables))
                 checkbox.pack(anchor='w', pady=5, padx=20)
+
         elif question['questionType'] == "Slider":
             # sliderLabel = tk.Label(quiz, text="Slider questions not ready yet", font=("Lucida Sans", 12))
             # sliderLabel.pack(pady=10)
-            slider = tk.Scale(quiz, variable=ans, from_=(question['answer'][0]), to=(question['answer'][1]), orient="horizontal")
+            slider = tk.Scale(quiz, variable=ans, from_=(question['answer'][0]), to=(question['answer'][1]), orient="horizontal", command=lambda _: selectOption(question['questionType']))
             slider.pack(pady=5, padx=20)
 
         # Show answer
