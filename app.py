@@ -122,7 +122,18 @@ def main():
     def submitSearchOptions():
         pass
     
-    
+        def goSearch():
+        #search for the songs based on input
+        #replace this code with searching function:
+        home.pack(fill="both", expand=True)
+        search.pack_forget()
+        randomSong.pack_forget()
+        playlist.pack_forget()
+        if quizFrames:
+            for frame in quizFrames:
+                frame.pack_forget()
+
+
     root = tk.Tk()
     root.title("Truify")
     #what size window do we need?
@@ -337,109 +348,112 @@ def main():
     
     
     
-    #SEARCH COMPONENTS    
-    searchFrameLabel = tk.Label(search, text="Search:", font=("Lucida Sans", 12))
-    searchFrameLabel.pack()
+    #SEARCH COMPONENTS
+    titleRow = 0
+    titleCol = 0
+    #Home button
+    homeButton = tk.Button(search, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
+    homeButton.grid(sticky = "w", row = titleRow, column = titleCol, pady=20, padx=20, columnspan = 100)
+
+    #Search label
+    searchTitle = tk.Label(search, text="Search", font=("Georgia", 25, "bold"))
+    searchTitle.grid(row = titleRow, column = titleCol, pady=5, padx=20, columnspan = 100)
+
+    # which types are these?
+    genreOptions = [
+        "A genre",
+        "another genre"
+    ]
+    genre = tk.StringVar()
+    genre.set("Please select a genre")
+    minYear = tk.IntVar()
+    minLength = tk.IntVar()
+    maxPopularity = tk.IntVar()
+    maxEnergy = tk.IntVar()
+    maxYear = tk.IntVar()
+    maxLength = tk.IntVar()
+    maxDanceability = tk.IntVar()
+    maxTempo = tk.IntVar()
+    searchSong = tk.StringVar()
+    searchArtist = tk.StringVar()
     
-    homeButtonAtSearch = tk.Button(search, text="HOME", command= showHomePage)
-    homeButtonAtSearch.pack()
+    genreInput = tk.OptionMenu(search, genre, *genreOptions)
+    genreInput.config(bg="black", fg="white", font=("Lucida Sans", 12))
+    minYearLabel = tk.Label(search, text="Min year:", font=("Lucida Sans", 12))
+    minYearInput = tk.Entry(search, textvariable=minYear, bg='black', fg='white')
+    maxYearLabel = tk.Label(search, text="Max year:", font=("Lucida Sans", 12))
+    maxYearInput = tk.Entry(search, textvariable=maxYear, bg='black', fg='white')
     
-    #Holds the genres the user wants to search
-    addGenreSearch = set()
-    
-    # Creates the different search property inputs
-    for components in searchInputComponents:
-        # Create a frame for each id group
-        idFrame = tk.Frame(search)
-        idFrame.pack(fill="x", pady=5)  # Stack vertically with padding
-        
-        #DropDown
-        if components["id"] == 1:
-            chosenGenreLabel = tk.Label(idFrame, text="Choose Genre(s)")
-            chosenGenreLabel.pack(side=tk.LEFT)
-            chosenGenre = tk.StringVar()
-            dropGenre = tk.OptionMenu(idFrame, chosenGenre, *components["genre"] )
-            dropGenre.pack(side=tk.LEFT)
-            
-            addGenre = tk.Button(idFrame, text="Add Genre", command=addDropdownGenres)
-            addGenre.pack()
-            deleteGenreList = tk.Button(idFrame, text="Delete List", command=deleteList)
-            deleteGenreList.pack()
-        #Text inputs    
-        elif components["id"] == 2:
-            for x in components["year"]:
-                inputYear = tk.IntVar()
+    minLengthLabel = tk.Label(search, text="Min Length:", font=("Lucida Sans", 12))
+    minLengthInput = tk.Entry(search, textvariable=minLength, bg='black', fg='white')
+    maxLengthLabel = tk.Label(search, text="Max Length:", font=("Lucida Sans", 12))
+    maxLengthInput = tk.Entry(search, textvariable=maxLength, bg='black', fg='white')
 
-                # Label for the year
-                label = tk.Label(idFrame, text=x)
-                label.pack(side=tk.LEFT, padx=5)
+    maxPopLabel = tk.Label(search, text="Min Popularity:", font=("Lucida Sans", 12))
+    maxDanceLabel = tk.Label(search, text="Max Danceability:", font=("Lucida Sans", 12))
+    maxEnergyLabel = tk.Label(search, text="Min Energy:", font=("Lucida Sans", 12))
+    maxTempoLabel = tk.Label(search, text="Max Tempo:", font=("Lucida Sans", 12))
 
-                # Entry for the year
-                entryYear = tk.Entry(idFrame, textvariable=inputYear)
-                entryYear.pack(side=tk.LEFT, padx=5)
-        #Text inputs
-        elif components["id"] == 3:
-            for x in components["length"]:
-                inputLength = tk.IntVar()
+    maxPopularityInput = tk.Entry(search, textvariable=maxPopularity, bg='black', fg='white')
+    maxEnergyInput = tk.Entry(search, textvariable=maxEnergy, bg='black', fg='white')
+    maxLengthInput = tk.Entry(search, textvariable=maxLength, bg='black', fg='white')
+    maxDanceabilityInput = tk.Entry(search, textvariable=maxDanceability, bg='black', fg='white')
+    maxTempoInput = tk.Entry(search, textvariable=maxTempo, bg='black', fg='white')
 
-                # Label for the length
-                label = tk.Label(idFrame, text=x)
-                label.pack(side=tk.LEFT, padx=5)
+    searchSongLabel = tk.Label(search, text="Search Song:", font=("Lucida Sans", 12))
+    searchSongInput = tk.Entry(search, textvariable=searchSong, bg='black', fg='white')
 
-                # Entry for the length
-                entryLength = tk.Entry(idFrame, textvariable=inputLength)
-                entryLength.pack(side=tk.LEFT, padx=5)
-        #Text inputs       
-        elif components["id"] == 4:
-            for x in components["PopularityandDance"]:
-                inputLength = tk.IntVar()
+    searchArtistLabel = tk.Label(search, text="Search Artist:", font=("Lucida Sans", 12))
+    searchArtistInput = tk.Entry(search, textvariable=searchArtist, bg='black', fg='white')
 
-                # Label for the length
-                label = tk.Label(idFrame, text=x)
-                label.pack(side=tk.LEFT, padx=5)
+    genreRow = titleRow + 1
+    genreCol = titleCol
+    genreInput.grid(row = genreRow, column = genreCol, columnspan = 100, padx = 15, pady = 25)
 
-                # Entry for the length
-                entryLength = tk.Entry(idFrame, textvariable=inputLength)
-                entryLength.pack(side=tk.LEFT, padx=5)
-        #Text inputs
-        else:
-            for x in components["EnergyandTempo"]:
-                inputLength = tk.IntVar()
+    mYRow = genreRow + 1
+    mYCol = genreCol
+    minYearLabel.grid(sticky = "w", row= mYRow, column= mYCol, padx=15, pady = 10)
+    minYearInput.grid(sticky = "w", row= mYRow, column= mYCol + 1)
+    maxYearLabel.grid(sticky = "w", row= mYRow, column= mYCol + 2, padx=10)
+    maxYearInput.grid(sticky = "w", row= mYRow, column= mYCol + 3)
 
-                # Label for the length
-                label = tk.Label(idFrame, text=x)
-                label.pack(side=tk.LEFT, padx=5)
+    mLRow = mYRow + 1
+    mLCol = mYCol
+    minLengthLabel.grid(sticky = "w", row= mLRow, column= mLCol, padx=15, pady = 10)
+    minLengthInput.grid(sticky = "w", row= mLRow, column= mLCol + 1)
+    maxLengthLabel.grid(sticky = "w", row= mLRow, column= mLCol + 2, padx=10)
+    maxLengthInput.grid(sticky = "w", row= mLRow, column= mLCol + 3)
 
-                # Entry for the length
-                entryLength = tk.Entry(idFrame, textvariable=inputLength)
-                entryLength.pack(side=tk.LEFT, padx=5)
-    
-    #Submit Button for the options
-    searchOptionsButton = tk.Button(search, text="Submit", command=submitSearchOptions)
-    searchOptionsButton.pack()
-    
-    #Need to add func to only search song or artist not both
+    mPRow = mLRow + 1
+    mPCol = mLCol
+    maxPopLabel.grid(sticky = "w", row= mPRow, column= mPCol, padx=15, pady = 10)
+    maxPopularityInput.grid(sticky = "w", row= mPRow, column= mPCol + 1)
+    maxDanceLabel.grid(sticky = "w", row= mPRow, column= mPCol + 2, padx=10)
+    maxDanceabilityInput.grid(sticky = "w", row= mPRow, column= mPCol + 3)
 
-    songSearched = tk.StringVar()
-    artistSearched = tk.StringVar()
-    
-    #Search Box for Song
-    songSearchLabel = tk.Label(search, text="Search Song")
-    songSearchLabel.pack()
-    entrySong = tk.Entry(search, textvariable=songSearched)
-    entrySong.pack()
-    
-    #Song Box for Artist
-    artistSearchLabel = tk.Label(search, text="Search Artist")
-    artistSearchLabel.pack()
-    entryArtist = tk.Entry(search, textvariable=artistSearched)
-    entryArtist.pack()
-    
-    #Submit Button for song and artist search box
-    buttonSearched = tk.Button(search, text="Submit", command=submit)
-    buttonSearched.pack()
- 
- 
+    mERow = mPRow + 1
+    mECol = mPCol
+    maxEnergyLabel.grid(sticky = "w", row= mERow, column= mECol, padx = 15, pady = (10, 30))
+    maxEnergyInput.grid(sticky = "w", row= mERow, column= mECol + 1, pady = (10, 30))
+    maxTempoLabel.grid(sticky = "w", row= mERow, column= mECol + 2, padx=10, pady = (10, 30))
+    maxTempoInput.grid(sticky = "w", row= mERow, column= mECol + 3, pady = (10, 30))
+
+    searchSongRow = mERow + 1
+    searchSongCol = mPCol
+    searchSongLabel.grid(sticky = "w", row = searchSongRow, column= searchSongCol, padx = (15, 0))
+    searchSongInput.grid(sticky = "NESW", row= searchSongRow, column= searchSongCol + 1, columnspan=100, pady = 15)
+
+    searchArtistRow = searchSongRow + 1
+    searchArtistCol = searchSongCol
+    searchArtistLabel.grid(sticky = "w", row = searchArtistRow, column= searchArtistCol, padx = (15, 0))
+    searchArtistInput.grid(sticky = "NESW", row = searchArtistRow, column= searchArtistCol + 1, columnspan=100, pady = 15)
+
+    searchRow = searchArtistRow + 1
+    searchCol = searchArtistCol
+
+    searchButton = tk.Button(search, text="Search", command=goSearch, bg='white', fg='black', font=("Lucida Sans", 14), padx = 5, pady = 5)
+    searchButton.grid(row = searchRow, column = searchCol, pady=20, padx=20, columnspan = 100)
+
     #RANDOM SONG COMPONENTS
     allSongs = mdb.getAllSongs()
     #Stores random song object to use as recommendation
