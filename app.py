@@ -179,7 +179,7 @@ def main():
         {
             "question": "Imagine you are talking with someone,\nthen you zone out. How would you respond?",
             "questionType": "Radiobuttons",
-            "answer": ["Huh", "What", "Can you say that again", "Respond with “Yea” while nodding your head and pretend you heard them"],
+            "answer": ["Huh", "What", "Can you say that again", "Respond with “Yea” while nodding\nyour head and pretend you heard them"],
             "category": "Genre",
             "attribute": ["Pop", "Folk/Acoustic", "Jazz", "Metal", "R&B", "Blues", "World/Traditional"]
         },
