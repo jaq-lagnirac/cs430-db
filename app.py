@@ -122,7 +122,7 @@ def main():
     def submitSearchOptions():
         pass
     
-        def goSearch():
+    def goSearch():
         #search for the songs based on input
         #replace this code with searching function:
         home.pack(fill="both", expand=True)
