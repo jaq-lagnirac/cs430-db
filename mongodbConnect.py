@@ -32,6 +32,26 @@ def getAllSongs():
   allresults = list(songs)
   return allresults
 
+def getSearchFilterQuery(query):
+  try:
+    songs = collection.find(query)
+    count = collection.count_documents(query)
+    #Checks if there are songs 
+    if count == 0:
+      print("We've determined that our dataset does not fit your taste of music. Sadly, we cannot give you any recommendations.")
+    else:
+      #Only used for printing the songs to terminal (TEMP) 
+      printer = pprint.PrettyPrinter()
+      for song in songs:
+        printer.pprint(song)
+    print("The total number of documents is: ", count)
+    return songs
+  except:
+    print("Something went wrong with the Query:")
+    print("1.Did the user answer the questions?")
+    print("2.Did the connection string work?")
+  
+
 #Everything else handles the mongodb connection
 
 #Need to setup a .env where for the connection string

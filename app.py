@@ -1,8 +1,12 @@
 import tkinter as tk
+from tkinter import messagebox
 import math
 import numpy as np
 import functions as func
 import mongodbConnect as mdb
+
+error_displayed = func.error_displayed
+
 def main():
     def showHomePage():
         home.pack(fill="both", expand=True)
@@ -106,7 +110,8 @@ def main():
     
     #Functions in the Search Frame   
     def addDropdownGenres():
-        addGenreSearch.add(chosenGenre.get())
+        if genre.get() != "Select a Genre":
+            addGenreSearch.add(genre.get())
         print(addGenreSearch)
     
     def deleteList():
@@ -115,13 +120,49 @@ def main():
     
     #Submit button for song and artist search
     def submit():
-        print(songSearched.get())
-        print(artistSearched.get())
+        #print(songSearched.get())
+        #print(artistSearched.get())
+        pass
     
     #Submit button for Song options in Search WIP:
     def submitSearchOptions():
-        pass
+        VALIDITYINDEX = 0
+        QUERYRESULT = 1
+        
+        #Hold All Filter Choices
+        try:
+            # Safely construct the dictionary
+            filterChoices = {
+                "genres": addGenreSearch,  
+                "minYear": minYear.get(),
+                "minLength": minLength.get(),
+                "maxPopularity": maxPopularity.get(),
+                "maxEnergy": maxEnergy.get(),
+                "maxYear": maxYear.get(),
+                "maxLength": maxLength.get(),
+                "maxDanceability": maxDanceability.get(),
+                "maxTempo": maxTempo.get()
+            }
+            results = func.filterValidQuery(filterChoices)
+            #Checks if Query is valid
+            if(results[VALIDITYINDEX] == True):
+                print("Query is valid")
+                mdb.getSearchFilterQuery(results[QUERYRESULT])
+            else:
+                #Notify the user that something went wrong 
+                print("Something went wrong")
+                pass
+        except Exception as e:
+            print("An unexpected error occurred:", e)
+            messagebox.showerror("Error","You entered a value this is not a number. OR You have not set a Max Year and Max Length")
+
+        
+        
+        
+        
+        #print(filterChoices)
     
+
     def goSearch():
         #search for the songs based on input
         #replace this code with searching function:
@@ -319,34 +360,7 @@ def main():
         backButton.pack(side="left", padx=75, pady=5)
         
  
-    #The options avaliable for the Search Page
-    searchInputComponents = [
-        {
-          "id": 1,
-          "genre": ["pop","Folk/Acoustic","jazz","metal",
-                    "R&B","blues","World/Traditional","country",
-                    "easy listening","rock","Dance/Electronic",
-                    "hip hop","latin","classical"]  
-        },
-        {
-            "id": 2,
-            "year": ["Min Year", "Max Year"] 
-        },
-        {
-            "id": 3,
-            "length" : ["Min Length:", "Max Length"]
-        },
-        {
-            "id": 4,
-            "PopularityandDance": ["Max Popularity", "Max Danceabilty"]
-        },
-        {
-            "id": 5,
-            "EnergyandTempo": ["Max Energy", "Max Tempo"]
-        }
-    ]
-    
-    
+    addGenreSearch = set()
     
     #SEARCH COMPONENTS
     titleRow = 0
@@ -360,12 +374,13 @@ def main():
     searchTitle.grid(row = titleRow, column = titleCol, pady=5, padx=20, columnspan = 100)
 
     # which types are these?
-    genreOptions = [
-        "A genre",
-        "another genre"
-    ]
+    genreOptions = ["pop","Folk/Acoustic","jazz","metal",
+                    "R&B","blues","World/Traditional","country",
+                    "easy listening","rock","Dance/Electronic",
+                    "hip hop","latin","classical"]  
+
     genre = tk.StringVar()
-    genre.set("Please select a genre")
+    genre.set("Select a Genre")
     minYear = tk.IntVar()
     minLength = tk.IntVar()
     maxPopularity = tk.IntVar()
@@ -379,7 +394,12 @@ def main():
     
     genreInput = tk.OptionMenu(search, genre, *genreOptions)
     genreInput.config(bg="black", fg="white", font=("Lucida Sans", 12))
-    minYearLabel = tk.Label(search, text="Min year:", font=("Lucida Sans", 12))
+    buttonAddGenreDropDown = tk.Button(search, text="Add Genre", command=addDropdownGenres)
+    buttonAddGenreDropDown.config(bg="black", fg="white", font=("Lucida Sans", 12))
+    buttonDeleteGenreList = tk.Button(search, text="Delete Genre List", command=deleteList)
+    buttonDeleteGenreList.config(bg="black", fg="white", font=("Lucida Sans", 12))
+    
+    minYearLabel = tk.Label(search, text="Min year :", font=("Lucida Sans", 12))
     minYearInput = tk.Entry(search, textvariable=minYear, bg='black', fg='white')
     maxYearLabel = tk.Label(search, text="Max year:", font=("Lucida Sans", 12))
     maxYearInput = tk.Entry(search, textvariable=maxYear, bg='black', fg='white')
@@ -400,6 +420,9 @@ def main():
     maxDanceabilityInput = tk.Entry(search, textvariable=maxDanceability, bg='black', fg='white')
     maxTempoInput = tk.Entry(search, textvariable=maxTempo, bg='black', fg='white')
 
+    buttonSubmitOptions = tk.Button(search, text="Submit Filters", command=submitSearchOptions)
+    buttonSubmitOptions.config(bg="black", fg="white", font=("Lucida Sans", 12))
+    
     searchSongLabel = tk.Label(search, text="Search Song:", font=("Lucida Sans", 12))
     searchSongInput = tk.Entry(search, textvariable=searchSong, bg='black', fg='white')
 
@@ -409,7 +432,9 @@ def main():
     genreRow = titleRow + 1
     genreCol = titleCol
     genreInput.grid(row = genreRow, column = genreCol, columnspan = 100, padx = 15, pady = 25)
-
+    buttonAddGenreDropDown.grid(row = genreRow, column =  genreCol + 2, columnspan= 50, padx = 15, pady= 25) #Dont know how to fix styling to match
+    buttonDeleteGenreList.grid(row = genreRow, column =  genreCol + 4, columnspan= 50, padx = 15, pady= 25) #Dont know how to fix styling to match
+    
     mYRow = genreRow + 1
     mYCol = genreCol
     minYearLabel.grid(sticky = "w", row= mYRow, column= mYCol, padx=15, pady = 10)
@@ -438,8 +463,12 @@ def main():
     maxTempoLabel.grid(sticky = "w", row= mERow, column= mECol + 2, padx=10, pady = (10, 30))
     maxTempoInput.grid(sticky = "w", row= mERow, column= mECol + 3, pady = (10, 30))
 
-    searchSongRow = mERow + 1
-    searchSongCol = mPCol
+    filterSubRow = mERow + 1
+    filterSubCol = mECol
+    buttonSubmitOptions.grid(sticky = "w", row= filterSubRow, column= filterSubCol + 1, pady = (10, 30))
+
+    searchSongRow = filterSubRow + 1
+    searchSongCol = filterSubCol
     searchSongLabel.grid(sticky = "w", row = searchSongRow, column= searchSongCol, padx = (15, 0))
     searchSongInput.grid(sticky = "NESW", row= searchSongRow, column= searchSongCol + 1, columnspan=100, pady = 15)
 

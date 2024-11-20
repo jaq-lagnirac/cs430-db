@@ -1,4 +1,6 @@
 import random
+import tkinter as tk
+from tkinter import messagebox
 
 answerToGenre = {
     "Dragon": "pop",
@@ -72,3 +74,67 @@ def getOneRandomSong(songList):
   randomNum = random.randrange(MININDEX, MAXINDEX)
 
   return(allSongs[randomNum])
+
+error_displayed = False
+
+def showError(error_message="An error occurred!"):
+    global error_displayed
+    if not error_displayed:
+        error_displayed = True
+        messagebox.showerror("Error", error_message)
+        error_displayed = False  
+
+def filterValidQuery(input):
+    STARTINDEX = 0
+    error_message = "Invalid Inputs"
+    genre = []
+    holdQueryVar = []
+    valid = True
+
+    # Set default genres if none are provided
+    if not input.get("genres"):
+        genre = [
+            "pop", "Folk/Acoustic", "jazz", "metal", "R&B", "blues",
+            "World/Traditional", "country", "easy listening", "rock",
+            "Dance/Electronic", "hip hop", "latin", "classical"
+        ]
+    else:
+        genre = list(input["genres"])
+
+    # Validation rules for each field
+    validation_rules = [
+        ("minYear", lambda x: isinstance(x, int) and x >= 0),
+        ("minLength", lambda x: isinstance(x, int) and x >= 0),
+        ("maxPopularity", lambda x: isinstance(x, int) and x >= 0),
+        ("maxEnergy", lambda x: isinstance(x, int) and x >= 0),
+        ("maxYear", lambda x: isinstance(x, int) and x > input["minYear"]),
+        ("maxLength", lambda x: isinstance(x, int) and x > input["minLength"]),
+        ("maxDanceability", lambda x: isinstance(x, int) and x >= 0),
+        ("maxTempo", lambda x: isinstance(x, int) and x >= 0),
+    ]
+
+    # Validate input fields
+    for key, rule in validation_rules:
+        value = input.get(key)
+        if rule(value):
+            holdQueryVar.append(value)
+        else:
+            valid = False
+            showError(f"{key}: {error_message}")
+            break  
+
+        
+    queryFilters = {
+        "genre": {"$in":genre},
+        "year": {"$gt":holdQueryVar[0], "$lt":holdQueryVar[4]},
+        "duration_ms": {"$gt":holdQueryVar[1], "$lt":holdQueryVar[5]},
+        "popularity": {"$gt": holdQueryVar[2]},
+        "energy": {"$gt":holdQueryVar[3]},
+        "danceability": {"$lt": holdQueryVar[6]},
+        "tempo": {"$lt":holdQueryVar[7]}
+    }
+    
+    
+    validAndSongs = (valid, queryFilters)
+    print(queryFilters)
+    return validAndSongs
