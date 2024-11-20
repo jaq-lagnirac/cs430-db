@@ -21,7 +21,7 @@ answerToGenre = {
 genres = []
 sliderYear = []
 parseRadio = []
-
+error_displayed = False
 
 #Gets the checkbox answer and converts it into the desired genre.
 def addGenreQuery(checkBoxStatus):
@@ -40,6 +40,7 @@ def updateYear(slide):
         sliderYear.append(yearRangeBottom)
     else:
         sliderYear.append(yearRangeTop)
+
 
 #Gets the useable value from the radio buttons
 def parseRadioValues(radioChosen):
@@ -75,8 +76,7 @@ def getOneRandomSong(songList):
 
   return(allSongs[randomNum])
 
-error_displayed = False
-
+# For any errors that may show up in the Search Page
 def showError(error_message="An error occurred!"):
     global error_displayed
     if not error_displayed:
@@ -84,8 +84,11 @@ def showError(error_message="An error occurred!"):
         messagebox.showerror("Error", error_message)
         error_displayed = False  
 
+
+# Checks if answers are valid and creates the query
 def filterValidQuery(input):
-    STARTINDEX = 0
+    CONVERTDECIMAL = 100
+    SECONDTOMILISECOND = 1000
     error_message = "Invalid Inputs"
     genre = []
     holdQueryVar = []
@@ -123,18 +126,30 @@ def filterValidQuery(input):
             showError(f"{key}: {error_message}")
             break  
 
-        
     queryFilters = {
         "genre": {"$in":genre},
         "year": {"$gt":holdQueryVar[0], "$lt":holdQueryVar[4]},
-        "duration_ms": {"$gt":holdQueryVar[1], "$lt":holdQueryVar[5]},
+        "duration_ms": {"$gt":(holdQueryVar[1]*SECONDTOMILISECOND), "$lt":(holdQueryVar[5]*SECONDTOMILISECOND)},
         "popularity": {"$gt": holdQueryVar[2]},
-        "energy": {"$gt":holdQueryVar[3]},
-        "danceability": {"$lt": holdQueryVar[6]},
+        "energy": {"$gt":(holdQueryVar[3]/CONVERTDECIMAL)},
+        "danceability": {"$lt": (holdQueryVar[6]/CONVERTDECIMAL)},
         "tempo": {"$lt":holdQueryVar[7]}
     }
-    
-    
+
     validAndSongs = (valid, queryFilters)
     print(queryFilters)
     return validAndSongs
+
+
+#In the 
+def valdititySongArtistSubmit(sSong, sArtist):
+    query = {}
+    if not(sSong == "") and not(sArtist== ""):
+        messagebox.showwarning("Warning", "Please search one at a time. (Note: Case-insensitive)")
+    else:
+        if not (sSong == ""):
+            query = {"song": {"$regex": sSong, "$options": "i"}}
+        else:
+            query = {"artist": {"$regex": sArtist, "$options": "i"}}
+            
+    return query

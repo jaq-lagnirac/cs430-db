@@ -38,7 +38,8 @@ def getSearchFilterQuery(query):
     count = collection.count_documents(query)
     #Checks if there are songs 
     if count == 0:
-      print("We've determined that our dataset does not fit your taste of music. Sadly, we cannot give you any recommendations.")
+      #Make this a page or popup
+      print("We've determined that our dataset does not fit your taste of music. Sadly, we cannot give you any recommendations. Please try again")
     else:
       #Only used for printing the songs to terminal (TEMP) 
       printer = pprint.PrettyPrinter()
@@ -51,7 +52,6 @@ def getSearchFilterQuery(query):
     print("1.Did the user answer the questions?")
     print("2.Did the connection string work?")
   
-
 #Everything else handles the mongodb connection
 
 #Need to setup a .env where for the connection string

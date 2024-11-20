@@ -120,11 +120,9 @@ def main():
     
     #Submit button for song and artist search
     def submit():
-        #print(songSearched.get())
-        #print(artistSearched.get())
         pass
     
-    #Submit button for Song options in Search WIP:
+    #Submit button for Song options in Search:
     def submitSearchOptions():
         VALIDITYINDEX = 0
         QUERYRESULT = 1
@@ -156,13 +154,22 @@ def main():
             print("An unexpected error occurred:", e)
             messagebox.showerror("Error","You entered a value this is not a number. OR You have not set a Max Year and Max Length")
 
-        
-        
-        
-        
         #print(filterChoices)
     
 
+    #Submit Button Functionality 
+    #NEED TO COMBINE WITH goSEARCH()
+    def checkSongArtistSubmit():
+        searchedSong = searchSong.get()
+        searchedArtist = searchArtist.get()
+
+        query = func.valdititySongArtistSubmit(searchedSong, searchedArtist)
+        if not query:
+            print("Something went wrong")
+        else:
+            mdb.getSearchFilterQuery(query)
+            print("It worked")
+              
     def goSearch():
         #search for the songs based on input
         #replace this code with searching function:
@@ -174,11 +181,32 @@ def main():
             for frame in quizFrames:
                 frame.pack_forget()
 
+    #Instructions for the Search Page
+    def showInstructions():
+        INSTRUCTION = '''
+        "minYear"-Input in a whole, non-negative number (Min Year: 2000)
+        
+        "minLength"-Input in a whole, non-negative number (seconds)
+        
+        "maxPopularity"- Input a whole, non-negative number (0-100)
+        
+        "maxEnergy"- Input a whole, non-negative number (0-100)
+        
+        "maxYear"- Input a whole, non-negative number that is greater than minYear (Max Year: 2020)
+        
+        "maxLength"- Input in a whole, non-negative number that is greater than minLength (seconds)
+        
+        "maxDanceability"- Input a whole, non-negative number (0-100)
+        
+        "maxTempo"- Input a whole, non-negative number (0-250)
+        '''
+        messagebox.showinfo("showinfo", INSTRUCTION)
+
 
     root = tk.Tk()
     root.title("Truify")
     #what size window do we need?
-    root.geometry("600x600")
+    root.geometry("800x700")
 
     #Frames for each page
     home = tk.Frame(root)
@@ -369,6 +397,10 @@ def main():
     homeButton = tk.Button(search, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
     homeButton.grid(sticky = "w", row = titleRow, column = titleCol, pady=20, padx=20, columnspan = 100)
 
+    #Instruction Button
+    instructionButton = tk.Button(search, text="Instructions", bg='white', fg='black', font=("Lucida Sans", 12), command=showInstructions )
+    instructionButton.grid(sticky = "e", row = titleRow, column = titleCol + 2, pady=20, padx=20, columnspan = 100)
+    
     #Search label
     searchTitle = tk.Label(search, text="Search", font=("Georgia", 25, "bold"))
     searchTitle.grid(row = titleRow, column = titleCol, pady=5, padx=20, columnspan = 100)
@@ -480,7 +512,7 @@ def main():
     searchRow = searchArtistRow + 1
     searchCol = searchArtistCol
 
-    searchButton = tk.Button(search, text="Search", command=goSearch, bg='white', fg='black', font=("Lucida Sans", 14), padx = 5, pady = 5)
+    searchButton = tk.Button(search, text="Search", command=checkSongArtistSubmit, bg='white', fg='black', font=("Lucida Sans", 14), padx = 5, pady = 5)
     searchButton.grid(row = searchRow, column = searchCol, pady=20, padx=20, columnspan = 100)
 
     #RANDOM SONG COMPONENTS
