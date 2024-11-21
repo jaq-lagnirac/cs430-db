@@ -144,7 +144,7 @@ def filterValidQuery(input):
 #In the 
 def valdititySongArtistSubmit(sSong, sArtist):
     query = {}
-    if not(sSong == "") and not(sArtist== ""):
+    if ((sSong == "") and (sArtist== "")) or (not(sSong == "") and not(sArtist== "")):
         messagebox.showwarning("Warning", "Please search one at a time. (Note: Case-insensitive)")
     else:
         if not (sSong == ""):
@@ -153,3 +153,35 @@ def valdititySongArtistSubmit(sSong, sArtist):
             query = {"artist": {"$regex": sArtist, "$options": "i"}}
             
     return query
+
+def checkQuizValid(checkvar, radioChosen):
+    EMPTY = "0"
+    EMPTYLENGTH = 0
+    validCheckbox = False
+    validRadio = True  
+    validSlider = True
+    # Check if at least one checkbox is selected (Question 1 or 2)
+    for valcheck in checkvar:
+        #print("This is for the checkboxes:",valcheck.get())  
+        if valcheck.get() != EMPTY:
+            validCheckbox = True
+            break  
+
+    if not validCheckbox:
+        messagebox.showerror("Error", "You haven't answered at least Question 1 or Question 2.")
+
+    # Check if all radio buttons are selected (Questions 3-11)
+    for valradio in radioChosen:
+        #print("This is for the radio buttons:",valradio.get())  
+        if valradio.get() == EMPTY:
+            messagebox.showerror("Error", "You haven't finished answering Questions 4-11.")
+            validRadio = False
+            break  
+
+    if len(sliderYear) == EMPTYLENGTH:
+        validSlider = False
+        messagebox.showerror("Error", "You haven't finished answering Question 3.")
+        
+        
+    # Return True only if all conditions are valid
+    return validCheckbox and validRadio and validSlider

@@ -16,6 +16,20 @@ def main():
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
+        
+        #From the Search Page, if home is click, reset the page.
+        genre.set("Select a Genre")
+        minYear.set(0)
+        minLength.set(0)
+        maxPopularity.set(0)
+        maxEnergy.set(0)
+        maxYear.set(0)
+        maxLength.set(0)
+        maxDanceability.set(0)
+        maxTempo.set(0)
+        searchSong.set(value="")
+        searchArtist.set(value="")
+        addGenreSearch.clear()
 
     def showQuiz():
         home.pack_forget()
@@ -93,7 +107,21 @@ def main():
             #Show previous frame
             quizFrames[index - 1].pack(fill="both", expand=True)
 
-    #Temp Function to check if the Querying works
+    #Checks if all the questions on the quiz have been answered
+    #If so prints the query
+    
+    #!!!Need to Add Frame function to where all the songs show on gui!!!
+    #!!!Need to add: When changing to song page, reset all the answers!!!
+    def checkQuiz():
+        valid = func.checkQuizValid(checkVar, radioChosenAnswers)
+        #print(valid)
+        if valid == True:
+            #ADD HERE
+            songs = printQuery()
+        else:
+            print("There has been an error")
+    
+    #Function to check if the Querying works
     def printQuery():
         #Makes the user responses useable
         func.parseRadioValues(radioChosenAnswers)
@@ -104,8 +132,11 @@ def main():
         #This stores all the songs the query returns
         #This is a Mongodb cursor
         #Access by using for loop when needed and each song is a dictionary with the fields being the keys.
+        #Can cast as a list by using list(songs)
         songs = mdb.find_all(query)
         print("----Works-----")
+        return songs
+       
     
     
     #Functions in the Search Frame   
@@ -118,10 +149,7 @@ def main():
         addGenreSearch.clear()
         print(addGenreSearch)
     
-    #Submit button for song and artist search
-    def submit():
-        pass
-    
+
     #Submit button for Song options in Search:
     def submitSearchOptions():
         VALIDITYINDEX = 0
@@ -155,24 +183,11 @@ def main():
             messagebox.showerror("Error","You entered a value this is not a number. OR You have not set a Max Year and Max Length")
 
         #print(filterChoices)
-    
 
-    #Submit Button Functionality 
-    #NEED TO COMBINE WITH goSEARCH()
-    def checkSongArtistSubmit():
-        searchedSong = searchSong.get()
-        searchedArtist = searchArtist.get()
-
-        query = func.valdititySongArtistSubmit(searchedSong, searchedArtist)
-        if not query:
-            print("Something went wrong")
-        else:
-            mdb.getSearchFilterQuery(query)
-            print("It worked")
-              
     def goSearch():
         #search for the songs based on input
         #replace this code with searching function:
+        '''
         home.pack(fill="both", expand=True)
         search.pack_forget()
         randomSong.pack_forget()
@@ -180,6 +195,19 @@ def main():
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
+        '''
+        
+        searchedSong = searchSong.get()
+        searchedArtist = searchArtist.get()
+        
+        #print("Printing:",searchedSong,searchedArtist)
+        querySongArtist = func.valdititySongArtistSubmit(searchedSong, searchedArtist)
+        #print("Printing:",querySongArtist)
+        if not querySongArtist:
+            print("Something went wrong")
+        else:
+            mdb.getSearchFilterQuery(querySongArtist)
+            print("It worked")
 
     #Instructions for the Search Page
     def showInstructions():
@@ -317,11 +345,11 @@ def main():
     #Store the values for the checkboxes
     checkVar = []
     
-
     #Store the values for the radiobuttons
     radioChosenAnswers = []
     
-    
+    quizcounter = 0 
+    LASTQUESTIONINDEX = 7
     #Setup for Quiz Questions 
     for question in questions:
         #Answer Default Value
@@ -336,7 +364,8 @@ def main():
         questionLabel.pack(anchor='w', pady=20, padx=20)
 
         quizLabel = tk.Label(quiz, text="Please make a selection", font=("Lucida Sans", 12))
-        counter = 0 
+        counter = 0
+        
         #if radio button:
         if question['questionType'] == "Radiobuttons":
             for answer in question['answer']:
@@ -356,8 +385,13 @@ def main():
                 if counter < len(question['attribute']):
                     counter += 1
             
-            button = tk.Button(quiz, text="Make Query", command=printQuery)
-            button.pack()
+            
+            # Submit Button for the Quiz
+            if quizcounter == LASTQUESTIONINDEX: 
+                button = tk.Button(quiz, text="Submit", command=checkQuiz)
+                button.pack()
+                
+            quizcounter += 1
         elif question['questionType'] == "Checkboxes":
             for answer in question['answer']:
                 var = tk.StringVar(value=0)
@@ -410,18 +444,28 @@ def main():
                     "R&B","blues","World/Traditional","country",
                     "easy listening","rock","Dance/Electronic",
                     "hip hop","latin","classical"]  
-
+    global genre
     genre = tk.StringVar()
     genre.set("Select a Genre")
+    global minYear
     minYear = tk.IntVar()
+    global minLength
     minLength = tk.IntVar()
+    global maxPopularity
     maxPopularity = tk.IntVar()
+    global maxEnergy
     maxEnergy = tk.IntVar()
+    global maxYear
     maxYear = tk.IntVar()
+    global maxLength
     maxLength = tk.IntVar()
+    global maxDanceability
     maxDanceability = tk.IntVar()
+    global maxTempo
     maxTempo = tk.IntVar()
+    global searchSong
     searchSong = tk.StringVar()
+    global searchArtist
     searchArtist = tk.StringVar()
     
     genreInput = tk.OptionMenu(search, genre, *genreOptions)
@@ -512,7 +556,7 @@ def main():
     searchRow = searchArtistRow + 1
     searchCol = searchArtistCol
 
-    searchButton = tk.Button(search, text="Search", command=checkSongArtistSubmit, bg='white', fg='black', font=("Lucida Sans", 14), padx = 5, pady = 5)
+    searchButton = tk.Button(search, text="Search", command=goSearch, bg='white', fg='black', font=("Lucida Sans", 14), padx = 5, pady = 5)
     searchButton.grid(row = searchRow, column = searchCol, pady=20, padx=20, columnspan = 100)
 
     #RANDOM SONG COMPONENTS
