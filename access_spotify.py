@@ -21,12 +21,17 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth # authenticates permissions
 from dotenv import load_dotenv, find_dotenv
 from flask import Flask, request, url_for, session, redirect # accesses HTTP requests
+# local runtime libraries
+# only for testing,not necessary for program integration
+import webbrowser as wb
+from multiprocessing import Process
 
 ### .ENV SECRETS BOILERPLATE ###
 load_dotenv(find_dotenv())
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 FLASK_KEY = os.getenv('FLASK_KEY')
+DATA_TRANSFER_JSON = os.getenv('DATA_TRANSFER_JSON')
 
 ### FLASK SETUP BOILERPLATE ###
 app = Flask(__name__) # initializes Flask app
@@ -141,12 +146,16 @@ def create_playlist():
         
     print('Initiating Spotify API track queries.')
 
-    songs_info = [
-        {
-            'title' : 'No Longer You',
-            'author' : 'Jorge Rivera-Herrans',
-        }
-    ]
+    # checks to see if song data transfer json exists, exits early if not
+    transfer_json_path = os.path.join(os.getcwd(), DATA_TRANSFER_JSON)
+    if not os.path.exists(transfer_json_path):
+        return 'Something went wrong with the data transfer JSON.'
+    
+    songs_info = None # scope resolution
+    with open(transfer_json_path, 'r') as json_file:
+        songs_info = json.load(json_file)['songs']
+    os.remove(transfer_json_path) # deletes json after extraction
+
     # QUERYING
     # iterates through video info to creacte search queries to Spotify API
     # URI - resource identifiers for objects in Spotify
@@ -222,23 +231,8 @@ def create_playlist():
     return end_str
 
 
-@app.route('/shutdown', methods=['POST'])
-def shutdown_server():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-    return 'Server shutting down...'
-
-
-from multiprocessing import Process
-import webbrowser as wb
 if __name__ == '__main__':
     wb.open('http://127.0.0.1:5000/')
     server = Process(target=app.run)
     server.start()
     server.join()
-       
-
-    # server.terminate()
-    print('test')
