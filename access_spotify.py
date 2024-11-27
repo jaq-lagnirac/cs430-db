@@ -106,7 +106,7 @@ def redirect_page():
     token_info = create_spotify_oauth().get_access_token(code)
     # save the token info in the session
     session[TOKEN_INFO] = token_info
-    # redirect the user to the convert_youtube_to_spotify route
+    # redirect the user to the create_playlist route
     return redirect(url_for('create_playlist',_external=True))
 
 
@@ -143,8 +143,8 @@ def create_playlist():
 
     songs_info = [
         {
-            'title' : 'DUMMY',
-            'author' : 'DUMMY',
+            'title' : 'No Longer You',
+            'author' : 'Jorge Rivera-Herrans',
         }
     ]
     # QUERYING
@@ -222,6 +222,23 @@ def create_playlist():
     return end_str
 
 
+@app.route('/shutdown', methods=['POST'])
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+    return 'Server shutting down...'
 
+
+from multiprocessing import Process
+import webbrowser as wb
 if __name__ == '__main__':
-    pass
+    wb.open('http://127.0.0.1:5000/')
+    server = Process(target=app.run)
+    server.start()
+    server.join()
+       
+
+    # server.terminate()
+    print('test')

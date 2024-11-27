@@ -3,3 +3,4 @@ archive.zip
 .venv/
 config.json
 .env
+.cache
