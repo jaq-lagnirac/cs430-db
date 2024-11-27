@@ -4,3 +4,4 @@ archive.zip
 config.json
 .env
 *.pyc
+.cache
