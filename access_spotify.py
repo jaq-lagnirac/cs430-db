@@ -228,11 +228,10 @@ def create_playlist():
     
     end_str = f'Playlist {playlist_title} successfully created and populated!'
     print(end_str)
-    return end_str
+    return f'<h1>{end_str}</h1>'
 
 
 if __name__ == '__main__':
-    wb.open('http://127.0.0.1:5000/')
     server = Process(target=app.run)
     server.start()
-    server.join()
+    wb.open('http://127.0.0.1:5000/')
