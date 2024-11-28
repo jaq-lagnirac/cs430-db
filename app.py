@@ -1,9 +1,23 @@
+# Justin Caringal, Lanz Dungo, Akansha Negi, Julian Williams
+# CS 430, Dr. Charles Yu
+# 
+# The main application for interfacing with the Truify Discography Database
+
 import tkinter as tk
 from tkinter import messagebox
 import math
 import numpy as np
 import functions as func
 import mongodbConnect as mdb
+
+# libraries that help set up Spotify API server
+import os
+import json
+import webbrowser as wb
+from multiprocessing import Process
+from access_spotify import app
+from dotenv import load_dotenv, find_dotenv
+LOCALHOST = 'http://127.0.0.1:5000/'
 
 error_displayed = func.error_displayed
 
@@ -135,6 +149,15 @@ def main():
         #Can cast as a list by using list(songs)
         songs = mdb.find_all(query)
         print("----Works-----")
+
+        songs_dict = {
+            'songs' : list(songs),
+        }
+        load_dotenv(find_dotenv())
+        json_path = os.getenv('DATA_TRANSFER_JSON')
+        with open(json_path, 'w') as transfer_file:
+            json.dump(songs_dict, transfer_file)
+        wb.open(LOCALHOST)
         return songs
        
     
@@ -590,6 +613,10 @@ def main():
         print(x.get())
     '''
     
-    
-main()
+if __name__ == '__main__':
+    # starts up Spotify API server
+    server = Process(target=app.run)
+    server.start()
 
+    # displays Truify GUI to user
+    main()

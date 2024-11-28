@@ -165,7 +165,7 @@ def create_playlist():
     queries_not_found = []
     for song in songs_info:
         # creates query and executes API call
-        search_query = f"{song['title']} {song['author']}"
+        search_query = f"{song['title']} {song['artist']}"
         print(f'Querying: {search_query}', end=' - Status - ')
         for attempt in range(1, MAX_REPEAT_QUERIES + 1):
             search_result = sp.search(search_query,
