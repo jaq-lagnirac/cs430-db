@@ -1,2 +1,0 @@
-
-                inputYear = tk.IntVar()
