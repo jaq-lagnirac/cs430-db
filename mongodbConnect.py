@@ -1,5 +1,6 @@
+import os
 import pprint
-import json
+from dotenv import load_dotenv, find_dotenv
 from pymongo import MongoClient
 
 
@@ -53,13 +54,11 @@ def getSearchFilterQuery(query):
   
 #Everything else handles the mongodb connection
 
+#Need to setup a .env where for the connection string
+load_dotenv(find_dotenv())
 try:
-  # Load config.json file with connection string
-  with open("config.json", "r") as config_file:
-    config = json.load(config_file)
-  connection_string = config.get("CONNECTION_STRING")
-  
   #Connection to Database
+  connection_string = os.environ.get("CONNECTION_STRING")
   client = MongoClient(connection_string)
   #Access the data
   #dbs = client.list_database_names()
