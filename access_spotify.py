@@ -33,7 +33,7 @@ try:
     base_path = sys._MEIPASS # only found in PyInstaller
 except Exception:
     base_path = os.path.abspath(".")
-config_path = os.path.join(base_path, 'config.json')
+config_path = os.path.join(base_path, 'keys', 'config.json')
 if not os.path.exists(config_path):
     print('No config.json detected.')
 config = None # scope resolution
