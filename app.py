@@ -146,12 +146,12 @@ def main():
         #This stores all the songs the query returns
         #This is a Mongodb cursor
         #Access by using for loop when needed and each song is a dictionary with the fields being the keys.
-        #Can cast as a list by using list(songs)
+        #songs is already in a list (gets typecasted in the find_all function)
         songs = mdb.find_all(query)
         print("----Works-----")
 
         songs_dict = {
-            'songs' : list(songs),
+            'songs' : songs,
         }
         load_dotenv(find_dotenv())
         json_path = os.getenv('DATA_TRANSFER_JSON')
