@@ -132,8 +132,9 @@ def main():
         #This stores all the songs the query returns
         #This is a Mongodb cursor
         #Access by using for loop when needed and each song is a dictionary with the fields being the keys.
-        #Can cast as a list by using list(songs)
+        #songs is already a list
         songs = mdb.find_all(query)
+        #print(songs)
         print("----Works-----")
         return songs
        

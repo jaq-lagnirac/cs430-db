@@ -16,12 +16,13 @@ def find_all(querys):
     if count == 0:
       print("We've determined that our dataset does not fit your taste of music. Sadly, we cannot give you any recommendations.")
     else:
+      songlist = list(songs)
       #Only used for printing the songs to terminal (TEMP)
       printer = pprint.PrettyPrinter()
-      for song in songs:
+      for song in songlist:
         printer.pprint(song)
     print("The total number of documents is: ", count)
-    return songs
+    return songlist
   except:
     print("Something went wrong with the Query:")
     print("1.Did the user answer the questions?")
@@ -41,12 +42,13 @@ def getSearchFilterQuery(query):
       #Make this a page or popup
       print("We've determined that our dataset does not fit your taste of music. Sadly, we cannot give you any recommendations. Please try again")
     else:
+      songlist = list(songs)
       #Only used for printing the songs to terminal (TEMP) 
       printer = pprint.PrettyPrinter()
-      for song in songs:
+      for song in songlist:
         printer.pprint(song)
     print("The total number of documents is: ", count)
-    return songs
+    return songlist
   except:
     print("Something went wrong with the Query:")
     print("1.Did the user answer the questions?")
