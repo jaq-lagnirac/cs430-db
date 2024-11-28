@@ -19,19 +19,31 @@ from time import time
 from datetime import datetime, timezone
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth # authenticates permissions
-from dotenv import load_dotenv, find_dotenv
 from flask import Flask, request, url_for, session, redirect # accesses HTTP requests
 # local runtime libraries
 # only for testing,not necessary for program integration
 import webbrowser as wb
 from multiprocessing import Process
 
-### .ENV SECRETS BOILERPLATE ###
-load_dotenv(find_dotenv())
-CLIENT_ID = os.getenv('CLIENT_ID')
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')
-FLASK_KEY = os.getenv('FLASK_KEY')
-DATA_TRANSFER_JSON = os.getenv('DATA_TRANSFER_JSON')
+
+### SECRETS BOILERPLATE ###
+# https://stackoverflow.com/a/72060275
+base_path = None # scope resolution
+try:
+    base_path = sys._MEIPASS # only found in PyInstaller
+except Exception:
+    base_path = os.path.abspath(".")
+config_path = os.path.join(base_path, 'config.json')
+if not os.path.exists(config_path):
+    print('No config.json detected.')
+config = None # scope resolution
+with open(config_path, 'r') as config_file:
+    config = json.load(config_file)
+
+CLIENT_ID = config['client_id']
+CLIENT_SECRET = config['client_secret']
+FLASK_KEY = config['flask_key']
+DATA_TRANSFER_JSON = config['data_transfer_json']
 
 ### FLASK SETUP BOILERPLATE ###
 app = Flask(__name__) # initializes Flask app
@@ -152,8 +164,8 @@ def create_playlist():
         return 'Something went wrong with the data transfer JSON.'
     
     songs_info = None # scope resolution
-    with open(transfer_json_path, 'r') as json_file:
-        songs_info = json.load(json_file)['songs']
+    with open(transfer_json_path, 'r') as transfer_file:
+        songs_info = json.load(transfer_file)['songs']
     os.remove(transfer_json_path) # deletes json after extraction
 
     # QUERYING
