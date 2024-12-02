@@ -15,8 +15,9 @@ import os
 import json
 import webbrowser as wb
 from multiprocessing import Process
-from access_spotify import app
 from dotenv import load_dotenv, find_dotenv
+from access_spotify import app
+from extract_songs import extract_songs
 LOCALHOST = 'http://127.0.0.1:5000/'
 
 error_displayed = func.error_displayed
@@ -151,8 +152,9 @@ def main():
         print("----Works-----")
 
         songs_dict = {
-            'songs' : songs,
+            'songs' : extract_songs(songs),
         }
+        print('LOOK AT MEEEEEE', songs, type(songs))
         load_dotenv(find_dotenv())
         json_path = os.getenv('DATA_TRANSFER_JSON')
         with open(json_path, 'w') as transfer_file:

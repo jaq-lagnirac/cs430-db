@@ -165,7 +165,7 @@ def create_playlist():
     queries_not_found = []
     for song in songs_info:
         # creates query and executes API call
-        search_query = f"{song['title']} {song['author']}"
+        search_query = f"{song['song']} {song['artist']}"
         print(f'Querying: {search_query}', end=' - Status - ')
         for attempt in range(1, MAX_REPEAT_QUERIES + 1):
             search_result = sp.search(search_query,
@@ -204,7 +204,7 @@ def create_playlist():
                             name=playlist_title,
                             public=True,
                             collaborative=False,
-                            description='This playlist was created by Jaq\'s YtS bot.')
+                            description='Created for a CS430 Project, jaq-lagnirac.')
     # finds new playlist created and extracts playlist ID
     current_playlists =  sp.current_user_playlists()['items']
     new_playlist_id = None
