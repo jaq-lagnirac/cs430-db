@@ -697,7 +697,7 @@ def main():
         
         if randCounter == 0:
             song = func.getOneRandomSong(allSongs)
-            targetString = f"\"{song["song"]}\"\n\n{song["artist"]}"
+            targetString = f"\"{song['song']}\"\n\n{song['artist']}"
             displayString.set(targetString)
     
         s = list(displayString.get())
