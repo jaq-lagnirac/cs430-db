@@ -5,3 +5,4 @@ config.json
 .env
 *.pyc
 .cache
+config.json
