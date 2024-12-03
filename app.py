@@ -154,7 +154,7 @@ def main():
         songs_dict = {
             'songs' : extract_songs(songs),
         }
-        print('LOOK AT MEEEEEE', songs, type(songs))
+
         load_dotenv(find_dotenv())
         json_path = os.getenv('DATA_TRANSFER_JSON')
         with open(json_path, 'w') as transfer_file:
