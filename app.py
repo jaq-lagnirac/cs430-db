@@ -14,7 +14,7 @@ def main():
         home.pack(fill="both", expand=True)
         search.pack_forget()
         randomSong.pack_forget()
-        playlist.pack_forget()
+        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -39,7 +39,7 @@ def main():
         home.pack_forget()
         search.pack_forget()
         randomSong.pack_forget()
-        playlist.pack_forget()
+        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -50,7 +50,7 @@ def main():
         home.pack_forget()
         search.pack_forget()
         randomSong.pack_forget()
-        playlist.pack_forget()
+        #playlist.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
@@ -60,7 +60,7 @@ def main():
         search.pack(fill="both", expand=True)
         home.pack_forget()
         randomSong.pack_forget()
-        playlist.pack_forget()
+        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -71,7 +71,7 @@ def main():
         randomSong.pack(fill="both", expand=True)
         home.pack_forget()
         search.pack_forget()
-        playlist.pack_forget()
+        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -81,6 +81,8 @@ def main():
         displayString.set("")
         randCounter = 0
 
+    #Not enough time
+    '''
     def showPlaylist():
         playlist.pack(fill="both", expand=True)
         home.pack_forget()
@@ -91,6 +93,7 @@ def main():
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
+    '''
 
     def showSearchResults():
         searchResults.pack(fill="both", expand=True)
@@ -98,7 +101,7 @@ def main():
         search.pack_forget()
         randomSong.pack_forget()
         quizResults.pack_forget()
-        playlist.pack_forget()
+        #playlist.pack_forget
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -125,20 +128,107 @@ def main():
 
 
     #Checks if all the questions on the quiz have been answered
-    #If so prints the query
-    #!!!Need to Add Frame function to where all the songs show on gui!!!
-    #!!!Need to add: When changing to song page, reset all the answers!!!
+    #If so creates/ shows the result page
     def checkQuiz():
-        valid = func.checkQuizValid(checkVar, radioChosenAnswers)
-        #print(valid)
-        if valid == True:
-            #ADD HERE
-            songs = printQuery()
+        quizState["valid"] = func.checkQuizValid(checkVar, radioChosenAnswers)
+        print("Quiz valid state:", quizState["valid"])
+        
+        if quizState["valid"]:
+            # Fetch songs based on quiz
+            quizState["songsFromQuiz"] = printQuery() or [] 
+            print("Songs from Quiz:", quizState["songsFromQuiz"])
             
-            #Also go to display quiz page
+            # Initialize lists for song properties
+            title, artist, release_date, genresForQuiz = [], [], [], []
+            
+            # Populate lists with song data if available
+            for song in quizState["songsFromQuiz"]:
+                title.append(song.get("song", "N/A"))  # Default to "N/A" if field is missing
+                artist.append(song.get("artist", "Unknown"))
+                release_date.append(song.get("year", "Unknown"))
+                genresForQuiz.append(song.get("genre", ["Unknown"]))
+    
+            # Make sure there are at least 10 song suggestions by filling with placeholders
+            while len(title) < 10:
+                title.append(f"Song {len(title) + 1}")
+                artist.append("Placeholder Artist")
+                release_date.append("Unknown Date")
+                genresForQuiz.append(["Placeholder Genre"])
+    
+            # Create the list of song suggestions
+            songSuggestions = [
+                {
+                    "title": title[i],
+                    "artist": artist[i],
+                    "release_date": release_date[i],
+                    "genre": genresForQuiz[i]
+                }
+                for i in range(len(title))
+            ]
+    
+            # Starting index for pagination
+            startIndex = 0
+    
+            def loadSongs(startIndex):
+                # Clear the current frame content
+                for frame in quizResults.winfo_children():
+                    frame.grid_forget()
+
+                # Set the current row to start rendering songs
+                quizTitleRow = 0
+                quizTitleCol = 0
+                currentRow = quizTitleRow + 1
+
+                # Home button
+                quizHomeButton = tk.Button(quizResults, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
+                quizHomeButton.grid(sticky="w", row=quizTitleRow, column=quizTitleCol, pady=20, padx=20)
+
+                # Quiz results label
+                quizResultsTitle = tk.Label(quizResults, text="Song Suggestions", font=("Georgia", 25, "bold"))
+                quizResultsTitle.grid(row=quizTitleRow, column=quizTitleCol + 1, pady=5, padx=20, columnspan=100)
+
+                # Loop through and load the current set of songs
+                for i in range(startIndex, min(startIndex + 4, len(songSuggestions))):
+                    song = songSuggestions[i]
+                    column = (i % 2)
+                    songName = tk.Label(quizResults, text=f"{i + 1}. {song['title']}", font=("Lucida Sans", 14, "bold"))
+                    songName.grid(row=currentRow, column=column * 2, pady=(25, 10), padx=20)
+
+                    artistName = tk.Label(quizResults, text=f"Artist: {song['artist']}", font=("Lucida Sans", 12))
+                    artistName.grid(row=currentRow + 1, column=column * 2, pady=5, padx=20)
+
+                    releaseName = tk.Label(quizResults, text=f"Release Date: {song['release_date']}", font=("Lucida Sans", 12))
+                    releaseName.grid(row=currentRow + 2, column=column * 2, pady=5, padx=20)
+
+                    genreName = tk.Label(quizResults, text=f"Genre: {', '.join(song['genre'])}", font=("Lucida Sans", 12))
+                    genreName.grid(row=currentRow + 3, column=column * 2, pady=5, padx=20)
+
+                    # Move to the next row only after the second column
+                    if column == 1:
+                        currentRow += 5
+
+                # Ensure buttons are always at the bottom
+                lastRow = currentRow + 5
+
+                # Add "Next" button
+                if startIndex + 4 < len(songSuggestions):
+                    nextSongsButton = tk.Button(quizResults, text="Next", command=lambda: loadNextFrame(startIndex, startIndex + 4), bg='black', fg='white', font=("Lucida Sans", 14))
+                    nextSongsButton.grid(row=lastRow, column=1, pady=20, padx=20)
+
+                # Add "Back" button
+                if startIndex > 0:
+                    backSongsButton = tk.Button(quizResults, text="Back", command=lambda: loadNextFrame(startIndex, startIndex - 4), bg='black', fg='white', font=("Lucida Sans", 14))
+                    backSongsButton.grid(row=lastRow, column=0, pady=20, padx=20)
+    
+            def loadNextFrame(startIndex, newStartIndex):
+                loadSongs(newStartIndex)
+    
+            # Load the first set of songs
+            loadSongs(startIndex)
             showQuizResults()
         else:
-            print("There has been an error")
+            print("The quiz is invalid or not completed. Please try again.")
+
     
     #Function to check if the Querying works
     def printQuery():
@@ -168,12 +258,11 @@ def main():
         print(addGenreSearch)
     
 
-    #Submit button for Song options in Search:
     def submitSearchOptions():
         VALIDITYINDEX = 0
         QUERYRESULT = 1
-        
-        #Hold All Filter Choices
+
+        # Hold All Filter Choices
         try:
             # Safely construct the dictionary
             filterChoices = {
@@ -187,46 +276,210 @@ def main():
                 "maxDanceability": maxDanceability.get(),
                 "maxTempo": maxTempo.get()
             }
+
             results = func.filterValidQuery(filterChoices)
-            #Checks if Query is valid
-            if(results[VALIDITYINDEX] == True):
+
+            # Check if the query is valid
+            if results[VALIDITYINDEX] == True:
                 print("Query is valid")
-                mdb.getSearchFilterQuery(results[QUERYRESULT])
+                songs = mdb.getSearchFilterQuery(results[QUERYRESULT])
+
+                # Call function to display song results
+                displaySongResults(songs)
             else:
-                #Notify the user that something went wrong 
                 print("Something went wrong")
                 pass
+
         except Exception as e:
             print("An unexpected error occurred:", e)
-            messagebox.showerror("Error","You entered a value this is not a number. OR You have not set a Max Year and Max Length")
+            messagebox.showerror("Error", "You entered a value that is not a number. OR You have not set a Max Year and Max Length")
 
-        #print(filterChoices)
+    def displaySongResults(songs):
+        """
+        Function to display the results of the filtered song search.
+        It will display song name and artist only.
+        """
+        print(f"Displaying search results for {len(songs)} songs")
+
+        # Clear previous content in the searchResults frame
+        for widget in searchResults.winfo_children():
+            widget.grid_forget()  # Removes widgets managed by grid
+
+        # Create a container frame for the list of songs
+        resultsFrame = tk.Frame(searchResults, bg='#f5f5f5', padx=20, pady=20)
+        resultsFrame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)  # Use grid for positioning the frame
+
+        # Adjust column/row weights for centering and scrolling
+        searchResults.grid_rowconfigure(0, weight=1, minsize=100)
+        searchResults.grid_columnconfigure(0, weight=1)
+
+        # Create a canvas for scrolling if there are many songs
+        canvas = tk.Canvas(resultsFrame)
+        scroll_y = tk.Scrollbar(resultsFrame, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scroll_y.set)
+
+        # Create a frame within the canvas for the actual song labels
+        songListFrame = tk.Frame(canvas, bg='#f5f5f5')
+
+        # Add the song list frame to the canvas
+        canvas.create_window((0, 0), window=songListFrame, anchor="nw")
+
+        # Pack the canvas and scrollbar within the resultsFrame
+        canvas.grid(row=0, column=0, sticky="nsew")  # Stretch the canvas horizontally and vertically
+        scroll_y.grid(row=0, column=1, sticky="ns")  # Stretch the scrollbar vertically
+
+        # Populate the song labels with numbers on the side
+        for idx, song in enumerate(songs, start=1):
+            # Create a label for each song with a number on the left
+            songText = f"{idx}. {song['song']} by {song['artist']}"
+            songLabel = tk.Label(songListFrame, text=songText, font=("Lucida Sans", 14), bg='#f5f5f5', anchor="w", padx=10, pady=10)
+
+            # Add a hover effect to the song labels for better interactivity
+            songLabel.bind("<Enter>", lambda event, label=songLabel: label.config(bg="#e0e0e0"))
+            songLabel.bind("<Leave>", lambda event, label=songLabel: label.config(bg="#f5f5f5"))
+
+            songLabel.grid(row=idx-1, column=0, sticky="w", padx=10, pady=5)  # Using grid instead of pack
+
+        # Update the scroll region to fit the content
+        songListFrame.update_idletasks()
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+        # Home Button (using grid for layout)
+        homeButton = tk.Button(searchResults, text="Back", command=showHomePage, bg="black", fg="white", font=("Lucida Sans", 14))
+        homeButton.grid(row=1, column=0, pady=10, sticky="nsew")  # Placed below the song list and stretches across
+
+        showSearchResults()
+
 
     def goSearch():
-        #search for the songs based on input
-        #replace this code with searching function:
-        '''
-        home.pack(fill="both", expand=True)
-        search.pack_forget()
-        randomSong.pack_forget()
-        playlist.pack_forget()
-        if quizFrames:
-            for frame in quizFrames:
-                frame.pack_forget()
-        '''
-        
+        # Get user input for song and artist
         searchedSong = searchSong.get()
         searchedArtist = searchArtist.get()
-        
-        #print("Printing:",searchedSong,searchedArtist)
-        querySongArtist = func.valdititySongArtistSubmit(searchedSong, searchedArtist)
-        #print("Printing:",querySongArtist)
+
+        # Validate the inputs
+        querySongArtist, optionChosen = func.valdititySongArtistSubmit(searchedSong, searchedArtist)
+
         if not querySongArtist:
             print("Something went wrong")
-        else:
-            mdb.getSearchFilterQuery(querySongArtist)
-            showSearchResults()
-            print("It worked")
+        else: 
+            # Query the database to fetch filtered results
+            songFromFilter = mdb.getSearchFilterQuery(querySongArtist)
+
+            # Check if results were found
+            if songFromFilter:
+                # Clear previous search results
+                for widget in searchResults.winfo_children():
+                    widget.grid_forget()  # or widget.pack_forget() depending on how you are packing widgets
+
+                if optionChosen == 'song':
+                    # Show the page for the single song
+                    song = songFromFilter[0]  # Get the first (and only) song result
+                    displaySingleSongPage(song)  # Implement this function to display details of the song
+                else:
+                    # Show the page of multiple songs from the artist
+                    displayArtistSongsPage(songFromFilter)  # Implement this function to display a list of songs
+
+                print("Search results displayed")
+            else:
+                # Handle no results
+                print("No matching songs found")
+
+    def displaySingleSongPage(song):
+        """
+        Function to display the details of a single song.
+        This is used within the search page
+        """
+        print(f"Displaying song details for: {song['song']} by {song['artist']}")
+
+        # Create a container frame for centering the content
+        songDetailsFrame = tk.Frame(searchResults, bg='#f5f5f5', padx=20, pady=20)
+
+        # Song name and artist
+        songDetailsLabel = tk.Label(songDetailsFrame, text=f"Song: {song['song']}", font=("Georgia", 16, "bold"), bg='#f5f5f5', anchor="center")
+        songDetailsLabel.grid(row=1, column=1, sticky="nsew", padx=10, pady=5)
+
+        artistDetailsLabel = tk.Label(songDetailsFrame, text=f"Artist: {song['artist']}", font=("Lucida Sans", 14), bg='#f5f5f5', anchor="center")
+        artistDetailsLabel.grid(row=2, column=1, sticky="nsew", padx=10, pady=5)
+
+        # Year, Genre, Duration
+        yearDetailsLabel = tk.Label(songDetailsFrame, text=f"Year: {song.get('year', 'N/A')}", font=("Lucida Sans", 12), bg='#f5f5f5', anchor="center")
+        yearDetailsLabel.grid(row=3, column=1, sticky="nsew", padx=10, pady=5)
+
+        genreDetailsLabel = tk.Label(songDetailsFrame, text=f"Genre: {song.get('genre', 'N/A')}", font=("Lucida Sans", 12), bg='#f5f5f5', anchor="center")
+        genreDetailsLabel.grid(row=4, column=1, sticky="nsew", padx=10, pady=5)
+
+        # Convert duration from ms to seconds
+        duration_seconds = song.get('duration_ms', 0) // 1000
+        durationDetailsLabel = tk.Label(songDetailsFrame, text=f"Duration: {duration_seconds} seconds", font=("Lucida Sans", 12), bg='#f5f5f5', anchor="center")
+        durationDetailsLabel.grid(row=5, column=1, sticky="nsew", padx=10, pady=5)
+
+        # Center the entire song details frame within the parent window
+        songDetailsFrame.grid(row=0, column=1, sticky="nsew")
+
+        # Adjust column/row weight for centering
+        searchResults.grid_rowconfigure(0, weight=1, minsize=100)
+        searchResults.grid_columnconfigure(0, weight=1)  # Empty column on the left
+        searchResults.grid_columnconfigure(1, weight=1)  # Middle column for content
+        searchResults.grid_columnconfigure(2, weight=1)  # Empty column on the right
+
+        # Create the Home (Back) button at the bottom
+        homeButton = tk.Button(searchResults, text="Back", command=showHomePage, bg="black", fg="white", font=("Lucida Sans", 14))
+        homeButton.grid(row=1, column=1, sticky="nsew", pady=(10, 20))  # Place it below the content frame
+
+        # Show the updated content
+        showSearchResults()
+
+
+    def displayArtistSongsPage(songs):
+        """
+        Function to display a list of songs from an artist.
+        This would involve showing the song names and artists in a numbered list.
+        """
+        print(f"Displaying songs by artist: {songs[0]['artist']}")
+
+        # Create a frame to hold the list of songs
+        artistSongsFrame = tk.Frame(searchResults, bg='#f5f5f5', padx=20, pady=20)
+        artistSongsFrame.pack(fill="both", expand=True, pady=(0, 20))  # Ensure the frame is packed with bottom padding
+
+        # Create a canvas for scrolling if there are many songs
+        canvas = tk.Canvas(artistSongsFrame)
+        scroll_y = tk.Scrollbar(artistSongsFrame, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scroll_y.set)
+
+        # Create a frame within the canvas for the actual song labels
+        songListFrame = tk.Frame(canvas, bg='#f5f5f5')
+
+        # Add the song list frame to the canvas
+        canvas.create_window((0, 0), window=songListFrame, anchor="nw")
+
+        # Pack the canvas and scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+        scroll_y.pack(side="right", fill="y")
+
+        # Populate the song labels with numbers on the side
+        for idx, song in enumerate(songs, start=1):
+            # Create a label for each song with a number on the left
+            songText = f"{idx}. {song['song']} by {song['artist']}"
+            songLabel = tk.Label(songListFrame, text=songText, font=("Lucida Sans", 14), bg='#f5f5f5', anchor="w", padx=10, pady=10)
+
+            # Add a hover effect to the song labels for better interactivity
+            songLabel.bind("<Enter>", lambda event, label=songLabel: label.config(bg="#e0e0e0"))
+            songLabel.bind("<Leave>", lambda event, label=songLabel: label.config(bg="#f5f5f5"))
+
+            songLabel.pack(fill="x", pady=5)
+
+        # Update the scroll region to fit the content
+        songListFrame.update_idletasks()
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+        # Create the Home (Back) button
+        homeButton = tk.Button(searchResults, text="Back", command=showHomePage, bg="black", fg="white", font=("Lucida Sans", 14))
+        homeButton.pack(side="bottom", pady=10) 
+
+        # Show the updated content
+        showSearchResults()
+
+
 
     #Instructions for the Search Page
     def showInstructions():
@@ -259,7 +512,7 @@ def main():
     home = tk.Frame(root)
     search = tk.Frame(root)
     randomSong = tk.Frame(root)
-    playlist = tk.Frame(root)
+    #playlist = tk.Frame(root) Not enough time
     quizResults = tk.Frame(root)
     searchResults = tk.Frame(root)
 
@@ -268,14 +521,14 @@ def main():
     quizButton = tk.Button(home, text="Quiz", command=showQuiz, bg='black', fg='white', font=("Georgia", 18, "bold"), padx=10, pady=10)
     searchButton = tk.Button(home, text="Search", command=showSearch, bg='black', fg='white', font=("Georgia", 18, "bold"), padx=10, pady=10)
     randomButton = tk.Button(home, text="Random Song", command=showRandomSong, bg='black', fg='white', font=("Georgia", 18, "bold"), padx=10, pady=10)
-    playlistButton = tk.Button(home, text="Playlist", command=showPlaylist, bg='black', fg='white', font=("Georgia", 18, "bold"), padx=10, pady=10)
+    #playlistButton = tk.Button(home, text="Playlist", command=showPlaylist, bg='black', fg='white', font=("Georgia", 18, "bold"), padx=10, pady=10)
 
     # Place in frames
     truifyLabel.pack(pady=20)
     quizButton.pack(pady=10)
     searchButton.pack(pady=10)
     randomButton.pack(pady=10)
-    playlistButton.pack(pady=10)
+    #playlistButton.pack(pady=10)
     
     #QUIZ COMPONENTS
     # Questions List:
@@ -360,6 +613,12 @@ def main():
         },
     ]
 
+    #Trackes whether the quiz is valid or not
+    quizState = {
+        "valid": False,
+        "songsFromQuiz": None,
+    }
+    
     #Create frames for each question
     quizFrames = []
 
@@ -451,132 +710,7 @@ def main():
     addGenreSearch = set()
 
 
-
-    #QUIZ RESULT COMPONENTS
     
-    songSuggestions = [
-        {
-            "title": "a song",
-            "artist": "an artist",
-            "release_date": "a date",
-            "genre": "a genre"
-        },
-        {
-            "title": "another song",
-            "artist": "another artist",
-            "release_date": "another date",
-            "genre": "another genre"
-        },
-        {
-            "title": "third song",
-            "artist": "third artist",
-            "release_date": "third date",
-            "genre": "third genre"
-        },
-        {
-            "title": "fourth song",
-            "artist": "fourth artist",
-            "release_date": "fourth date",
-            "genre": "fourth genre"
-        },
-        {
-            "title": "fifth song",
-            "artist": "an artist",
-            "release_date": "a date",
-            "genre": "a genre"
-        },
-        {
-            "title": "sixth song",
-            "artist": "another artist",
-            "release_date": "another date",
-            "genre": "another genre"
-        },
-        {
-            "title": "seventh song",
-            "artist": "third artist",
-            "release_date": "third date",
-            "genre": "third genre"
-        },
-        {
-            "title": "eighth song",
-            "artist": "fourth artist",
-            "release_date": "fourth date",
-            "genre": "fourth genre"
-        },
-        {
-            "title": "ninth song",
-            "artist": "third artist",
-            "release_date": "third date",
-            "genre": "third genre"
-        },
-        {
-            "title": "tenth song",
-            "artist": "fourth artist",
-            "release_date": "fourth date",
-            "genre": "fourth genre"
-        },
-    ]
-
-    # starting index
-    startIndex = 0
-
-    def loadSongs(startIndex):
-        # Clear the current frame content
-        for frame in quizResults.winfo_children():
-            frame.grid_forget()
-        
-        # Set the current row to start rendering songs
-        quizTitleRow = 0
-        quizTitleCol = 0
-        currentRow = quizTitleRow + 1
-        
-        # Loop through and load the current set of songs
-        for i in range(startIndex, min(startIndex + 4, len(songSuggestions))): 
-            
-            #Home button
-            quizHomeButton = tk.Button(quizResults, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
-            quizHomeButton.grid(sticky = "w", row = quizTitleRow, column = quizTitleCol, pady=20, padx=20)
-            
-            #Quiz results label
-            quizResultsTitle = tk.Label(quizResults, text="Song Suggestions", font=("Georgia", 25, "bold"))
-            quizResultsTitle.grid(row = quizTitleRow, column = quizTitleCol + 1, pady=5, padx=20, columnspan = 100)
-            song = songSuggestions[i]
-            column = (i % 2)
-
-            songName = tk.Label(quizResults, text=f"{i + 1}. {song['title']}", font=("Lucida Sans", 14, "bold"))
-            songName.grid(row=currentRow, column=column * 2, pady=(25, 10), padx=20)
-
-            artistName = tk.Label(quizResults, text=f"Artist: {song['artist']}", font=("Lucida Sans", 12))
-            artistName.grid(row=currentRow + 1, column=column * 2, pady=5, padx=20)
-
-            releaseName = tk.Label(quizResults, text=f"Release Date: {song['release_date']}", font=("Lucida Sans", 12))
-            releaseName.grid(row=currentRow + 2, column=column * 2, pady=5, padx=20)
-
-            genreName = tk.Label(quizResults, text=f"Genre: {song['genre']}", font=("Lucida Sans", 12))
-            genreName.grid(row=currentRow + 3, column=column * 2, pady=5, padx=20)
-
-            addPlaylistButton = tk.Button(quizResults, text="Add to Playlist", bg='white', fg='black', font=("Lucida Sans", 12))
-            addPlaylistButton.grid(row=currentRow + 4, column=column * 2, pady=20, padx=20)
-
-            if column == 1:
-                currentRow += 5
-
-        # Add "Next" button
-        if startIndex + 4 < len(songSuggestions):
-            nextSongsbutton = tk.Button(quizResults, text="Next", command=lambda: loadNextFrame(startIndex, startIndex + 4), bg='black', fg='white', font=("Lucida Sans", 14))
-            nextSongsbutton.grid(row=currentRow, column=1, pady=20, padx=20)
-
-        # Add "Back" button
-        if startIndex > 0:
-            backSongsButton = tk.Button(quizResults, text="Back", command=lambda: loadNextFrame(startIndex, startIndex - 4), bg='black', fg='white', font=("Lucida Sans", 14))
-            backSongsButton.grid(row=currentRow, column=0, pady=20, padx=20)
-
-    def loadNextFrame(startIndex, newStartIndex):
-        startIndex = newStartIndex
-        loadSongs(startIndex)
-
-    # Load first set of songs
-    loadSongs(startIndex)
 
     #SEARCH COMPONENTS
     titleRow = 0
@@ -713,89 +847,6 @@ def main():
     searchButton = tk.Button(search, text="Search", command=goSearch, bg='white', fg='black', font=("Lucida Sans", 14), padx = 5, pady = 5)
     searchButton.grid(row = searchRow, column = searchCol, pady=20, padx=20, columnspan = 100)
 
-    #SEARCH RESULT COMPONENTS
-    searchResultsArray = [
-        {"song": "a song", "artist": "an artist"},
-        {"song": "another song", "artist": "another artist"},
-        {"song": "third song", "artist": "third artist"},
-        {"song": "fourth song", "artist": "fourth artist"},
-        {"song": "fifth song", "artist": "fifth artist"},
-        {"song": "sixth song", "artist": "sixth artist"},
-        {"song": "seventh song", "artist": "seventh artist"},
-        {"song": "eighth song", "artist": "eighth artist"},
-        {"song": "ninth song", "artist": "ninth artist"},
-        {"song": "tenth song", "artist": "tenth artist"},
-        {"song": "eleventh song", "artist": "eleventh artist"},
-        {"song": "twelfth song", "artist": "twelfth artist"},
-        {"song": "thirteenth song", "artist": "thirteenth artist"},
-        {"song": "fourteenth song", "artist": "fourteenth artist"},
-        {"song": "fifteenth song", "artist": "fifteenth artist"},
-        {"song": "sixteenth song", "artist": "sixteenth artist"},
-        {"song": "seventeenth song", "artist": "seventeenth artist"},
-        {"song": "eighteenth song", "artist": "eighteenth artist"},
-        {"song": "nineteenth song", "artist": "nineteenth artist"},
-        {"song": "twentieth song", "artist": "twentieth artist"}
-    ]
-
-    currentFrame = 0
-    results = 6
-
-    # Display search results per page
-    def searchResultsPerPage(page):
-        # Clear frames
-        for widget in searchResults.winfo_children():
-            widget.grid_forget()
-
-        # Start and end index for current page
-        startIndex = page * results
-        endIndex = min(startIndex + results, len(searchResultsArray))
-        searchResultRow = 0
-        searchResultCol = 0
-
-        # Home button
-        searchHomeButton = tk.Button(searchResults, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
-        searchHomeButton.grid(row=searchResultRow, column=searchResultCol, pady=20, padx=20, sticky="w")
-
-        # Search results title
-        #I can NOT get this centered...
-        searchResultsTitle = tk.Label(searchResults, text="Search Results", font=("Georgia", 25, "bold"))
-        searchResultsTitle.grid(row=searchResultRow, column=searchResultCol + 1, pady=5, padx=20, columnspan=100, sticky="NESW")
-        searchResultRow += 1
-
-        # Display results for current page
-        if len(searchResultsArray) > 0:
-            for i, result in enumerate(searchResultsArray[startIndex:endIndex]):
-                # Result label
-                resultLabel = tk.Label(searchResults, text=f"{startIndex + i + 1}. {result['song']} by {result['artist']}", font=("Lucida Sans", 12), pady=10, padx=30)
-                resultLabel.grid(row=searchResultRow, column=searchResultCol, pady=10, padx=20, sticky="w")
-                
-                searchResultRow += 1
-        else:
-            resultLabel = tk.Label(searchResults, text="No results found.", font=("Lucida Sans", 12), pady=10, padx=30)
-            resultLabel.grid(row=searchResultRow, column=searchResultCol, pady=10, padx=20, sticky="w")
-
-        # Button row
-        buttonRow = searchResultRow
-        buttonCol = searchResultCol
-
-        # Back Button
-        if page > 0:
-            searchBack = tk.Button(searchResults, text="Back", command=lambda: changeSearchFrame(page - 1, currentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
-            searchBack.grid(row=buttonRow, column=buttonCol, padx=75, pady=5, columnspan=2, sticky="w")
-
-        # Next Button
-        if endIndex < len(searchResultsArray):
-            searchNext = tk.Button(searchResults, text="Next", command=lambda: changeSearchFrame(page + 1, currentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
-            searchNext.grid(row=buttonRow, column=searchResultCol + 1, padx=75, pady=5, columnspan=2, sticky="e")
-
-    # change frames
-    def changeSearchFrame(page, currentFrame):
-        currentFrame = page
-        searchResultsPerPage(currentFrame)
-
-    searchResultsPerPage(currentFrame)
-
-
 
     #RANDOM SONG COMPONENTS
     global randCounter
@@ -861,7 +912,8 @@ def main():
     ).pack(side="bottom", pady=10)
     
 
-
+    # NOT ENOUGH TIME TO DO
+    '''
     #PLAYLIST COMPONENTS
     playlistResults = [
         {"song": "a song", "artist": "an artist"},
@@ -951,12 +1003,12 @@ def main():
         displayPlaylistResults(plCurrentFrame)
 
     displayPlaylistResults(plCurrentFrame)
-
+    '''
 
     # Show Home page initially
     showHomePage()
     root.mainloop()
-   
+    
    
     # Checks if the user answers are captured correctly
     '''

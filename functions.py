@@ -141,18 +141,21 @@ def filterValidQuery(input):
     return validAndSongs
 
 
-#In the 
+#In the search page. Its the search bars
 def valdititySongArtistSubmit(sSong, sArtist):
     query = {}
+    optionChosen = ''
     if ((sSong == "") and (sArtist== "")) or (not(sSong == "") and not(sArtist== "")):
         messagebox.showwarning("Warning", "Please search one at a time. (Note: Case-insensitive)")
     else:
         if not (sSong == ""):
             query = {"song": {"$regex": sSong, "$options": "i"}}
+            optionChosen = 'song'
         else:
             query = {"artist": {"$regex": sArtist, "$options": "i"}}
+            optionChosen = 'artist'
             
-    return query
+    return (query, optionChosen)
 
 def checkQuizValid(checkvar, radioChosen):
     EMPTY = "0"
