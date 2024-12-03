@@ -203,7 +203,6 @@ def main():
         #print(filterChoices)
 
     def goSearch():
-        showSearchResults()
         #search for the songs based on input
         #replace this code with searching function:
         '''
@@ -226,6 +225,7 @@ def main():
             print("Something went wrong")
         else:
             mdb.getSearchFilterQuery(querySongArtist)
+            showSearchResults()
             print("It worked")
 
     #Instructions for the Search Page
