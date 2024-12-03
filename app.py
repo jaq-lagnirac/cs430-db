@@ -763,12 +763,16 @@ def main():
         searchResultRow += 1
 
         # Display results for current page
-        for i, result in enumerate(searchResultsArray[startIndex:endIndex]):
-            # Result label
-            resultLabel = tk.Label(searchResults, text=f"{startIndex + i + 1}. {result['song']} by {result['artist']}", font=("Lucida Sans", 12), pady=10, padx=30)
+        if len(searchResultsArray) > 0:
+            for i, result in enumerate(searchResultsArray[startIndex:endIndex]):
+                # Result label
+                resultLabel = tk.Label(searchResults, text=f"{startIndex + i + 1}. {result['song']} by {result['artist']}", font=("Lucida Sans", 12), pady=10, padx=30)
+                resultLabel.grid(row=searchResultRow, column=searchResultCol, pady=10, padx=20, sticky="w")
+                
+                searchResultRow += 1
+        else:
+            resultLabel = tk.Label(searchResults, text="No results found.", font=("Lucida Sans", 12), pady=10, padx=30)
             resultLabel.grid(row=searchResultRow, column=searchResultCol, pady=10, padx=20, sticky="w")
-            
-            searchResultRow += 1
 
         # Button row
         buttonRow = searchResultRow
@@ -906,17 +910,22 @@ def main():
         plTitle.grid(row=playlistRow, column=playlistCol + 1, pady=5, padx=20, columnspan=100, sticky="NESW")
         playlistRow += 1
 
-        # Display results for current page
-        for i, result in enumerate(playlistResults[startIndex:endIndex]):
-            # Result label
-            songLabel = tk.Label(playlist, text=f"{startIndex + i + 1}. {result['song']} by {result['artist']}", font=("Lucida Sans", 12), pady=10, padx=30)
+        if len(playlistResults) > 0:
+            # Display results for current page
+            for i, result in enumerate(playlistResults[startIndex:endIndex]):
+                # Result label
+                songLabel = tk.Label(playlist, text=f"{startIndex + i + 1}. {result['song']} by {result['artist']}", font=("Lucida Sans", 12), pady=10, padx=30)
+                songLabel.grid(row=playlistRow, column=playlistCol, pady=2, padx=20, sticky="w")
+
+                # Delete Button
+                deleteButton = tk.Button(playlist, text="Delete", command=lambda index=startIndex + i: deleteSong(index), bg='red', fg='white', font=("Lucida Sans", 10))
+                deleteButton.grid(row=playlistRow, column=playlistCol + 1, pady=10, padx=20, sticky="e", columnspan = 100)
+
+                playlistRow += 1
+        else:
+            songLabel = tk.Label(playlist, text="No results found.", font=("Lucida Sans", 12), pady=10, padx=30)
             songLabel.grid(row=playlistRow, column=playlistCol, pady=2, padx=20, sticky="w")
 
-            # Delete Button
-            deleteButton = tk.Button(playlist, text="Delete", command=lambda index=startIndex + i: deleteSong(index), bg='red', fg='white', font=("Lucida Sans", 10))
-            deleteButton.grid(row=playlistRow, column=playlistCol + 1, pady=10, padx=20, sticky="e", columnspan = 100)
-
-            playlistRow += 1
 
         # Button row
         buttonRow = playlistRow
