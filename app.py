@@ -611,7 +611,7 @@ def main():
     displayLabel = tk.Label(
         randomSong,
         textvariable=displayString,
-        font=("Lucida Sans", 20)
+        font=("Consolas", 20)
     ).pack(pady=80)
 
     randButton = tk.Button(
