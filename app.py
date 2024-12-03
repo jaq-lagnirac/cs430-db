@@ -4,6 +4,8 @@ import math
 import numpy as np
 import functions as func
 import mongodbConnect as mdb
+import random
+import string
 
 error_displayed = func.error_displayed
 
@@ -70,6 +72,9 @@ def main():
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
+
+        displayString.set("")
+        randCounter = 0
 
     def showPlaylist():
         playlist.pack(fill="both", expand=True)
@@ -678,10 +683,67 @@ def main():
     searchButton.grid(row = searchRow, column = searchCol, pady=20, padx=20, columnspan = 100)
 
     #RANDOM SONG COMPONENTS
+    global randCounter
+    randCounter = 0
+    global targetString
+    targetString = ""
     allSongs = mdb.getAllSongs()
-    #Stores random song object to use as recommendation
-    randoSong = func.getOneRandomSong(allSongs)
+    song = None
+    displayString = tk.StringVar()
+    
+    def _randomize():
+        global randCounter
+        global targetString
+        
+        if randCounter == 0:
+            song = func.getOneRandomSong(allSongs)
+            targetString = f"\"{song["song"]}\"\n\n{song["artist"]}"
+            displayString.set(targetString)
+    
+        s = list(displayString.get())
+        s[randCounter] = targetString[randCounter]   
+        randCounter += 1
+        for i in range(randCounter, len(targetString)):
+            if s[i].isspace() or s[i] == "\"":
+                continue    
+            s[i] = random.choice(string.ascii_letters)
+        displayString.set("".join(s))
 
+        if randCounter < len(targetString):
+            root.after(50, _randomize)
+        else:
+            randCounter = 0
+
+    def randomize():
+        global randCounter
+        if randCounter == 0:
+            _randomize()
+    
+    title = tk.Label(
+        randomSong,
+        text="Song Randomizer",
+        font=("Lucida Sans", 32)
+    ).pack(pady=10)
+
+    displayLabel = tk.Label(
+        randomSong,
+        textvariable=displayString,
+        font=("Consolas", 20)
+    ).pack(pady=80)
+
+    randButton = tk.Button(
+        randomSong,
+        text="Randomize!",
+        command=randomize,
+        bg="black", fg="white", font=("Lucida Sans", 14)
+    ).pack(ipadx=20, ipady=10)
+    
+    backButton = tk.Button(
+        randomSong,
+        text="Back",
+        command=showHomePage,
+        bg="black", fg="white", font=("Lucida Sans", 14)
+    ).pack(side="bottom", pady=10)
     
     #PLAYLIST COMPONENTS
 
