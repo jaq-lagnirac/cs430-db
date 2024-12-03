@@ -13,6 +13,7 @@ def main():
         search.pack_forget()
         randomSong.pack_forget()
         playlist.pack_forget()
+        quizResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -36,14 +37,26 @@ def main():
         search.pack_forget()
         randomSong.pack_forget()
         playlist.pack_forget()
+        quizResults.pack_forget()
         if quizFrames:
             quizFrames[0].pack(fill="both", expand=True)
+
+    def showQuizResults():
+        quizResults.pack(fill="both", expand=True)
+        home.pack_forget()
+        search.pack_forget()
+        randomSong.pack_forget()
+        playlist.pack_forget()
+        if quizFrames:
+            for frame in quizFrames:
+                frame.pack_forget()
 
     def showSearch():
         search.pack(fill="both", expand=True)
         home.pack_forget()
         randomSong.pack_forget()
         playlist.pack_forget()
+        quizResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -53,6 +66,7 @@ def main():
         home.pack_forget()
         search.pack_forget()
         playlist.pack_forget()
+        quizResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -62,6 +76,7 @@ def main():
         home.pack_forget()
         search.pack_forget()
         randomSong.pack_forget()
+        quizResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -71,27 +86,6 @@ def main():
             quizLabel.config(text="You selected: " + str(ans.get()))
         elif questionType == "Slider":
             quizLabel.config(text="You selected: " + str(ans.get()))
-
-        #Add to list of calculations and calculate at end
-        # if selectedAnswers[index]:
-        #     selectedAnswers[index] = str(ans.get())
-        # else:
-        #     selectedAnswers.append(str(ans.get()))
-
-    def selectCheckbox(cVariables):
-        labelString = "You selected: \n"
-        selectedChecks = []
-        for index, var in enumerate(cVariables):
-            if var.get():
-                labelString += str(question["answer"][index]) + "\n"
-                selectedChecks.append(question["answer"][index])
-        quizLabel.config(text=labelString)
-
-        #Add to list of calculations and calculate at end
-        # if selectedAnswers[index]:
-        #     selectedAnswers[index] = selectedChecks
-        # else:
-        #     selectedAnswers.append(selectedChecks)
 
     def goNext(index):
         if index < len(quizFrames) - 1:
@@ -107,9 +101,9 @@ def main():
             #Show previous frame
             quizFrames[index - 1].pack(fill="both", expand=True)
 
+
     #Checks if all the questions on the quiz have been answered
     #If so prints the query
-    
     #!!!Need to Add Frame function to where all the songs show on gui!!!
     #!!!Need to add: When changing to song page, reset all the answers!!!
     def checkQuiz():
@@ -118,6 +112,9 @@ def main():
         if valid == True:
             #ADD HERE
             songs = printQuery()
+            
+            #Also go to display quiz page
+            showQuizResults()
         else:
             print("There has been an error")
     
@@ -137,8 +134,6 @@ def main():
         #print(songs)
         print("----Works-----")
         return songs
-       
-    
     
     #Functions in the Search Frame   
     def addDropdownGenres():
@@ -242,6 +237,7 @@ def main():
     search = tk.Frame(root)
     randomSong = tk.Frame(root)
     playlist = tk.Frame(root)
+    quizResults = tk.Frame(root)
 
     #HOME PAGE COMPONENTS
     truifyLabel = tk.Label(home, text="Truify", font=("Lucida Sans", 24, "bold"))
@@ -262,14 +258,14 @@ def main():
     # question, type of question, answers, category of attribute, attributes
     questions = [
         {
-            "question": "Which of the following would you like to be real? (You can choose more than one)",
+            "question": "Which of the following would you like to be real?\n(You can choose more than one)",
             "questionType": "Checkboxes",
             "answer": ["Dragon", "Unicorn", "Mermaid", "Fairy", "Goblin", "Troll", "Phoenix"],
             "category": "Genre",
             "attribute": ["pop", "Folk/Acoustic", "jazz", "metal", "R&B", "blues", "World/Traditional"]
         },
         {
-            "question": "If you could time travel, where would you go? (You can choose more than one)",
+            "question": "If you could time travel, where would you go?\n(You can choose more than one)",
             "questionType": "Checkboxes",
             "answer": ["Dinosaur age", "Ancient Egypt", "Medieval Europe", "Future dystopia", "Pirate era", "Space exploration", "Fantasy world"],
             "category": "Genre",
@@ -311,14 +307,14 @@ def main():
             "attribute": ["0.25,1", "0.1,0.8", "0.2,1", "0.3,1", "0,0.5"]
         },
         {
-            "question": "Out of these options, which one would you choose to wake you up for the rest of your life? (They could happen at any time)",
+            "question": "Out of these options, which one would you choose\nto wake you up for the rest of your life?\n(They could happen at any time)",
             "questionType": "Radiobuttons",
             "answer": ["Standard alarm sound", "Metal Pipe falling sound effect", "Fire Alarm"],
             "category": "Loudness",
             "attribute": ["-16,-0.1", "-0.14, -0.2", "-20.6,-3"] #DECIDED NOT USE FOR QUERY
         },
         {
-            "question": "Imagine you are talking with someone, then you zone out. How would you respond?",
+            "question": "Imagine you are talking with someone, then you zone out.\nHow would you respond?",
             "questionType": "Radiobuttons",
             "answer": ["Huh", "What", "Can you say that again", "Respond with 'Yea' while nodding your head and pretend you heard them"],
             "category": "Speechness",
@@ -350,7 +346,9 @@ def main():
     radioChosenAnswers = []
     
     quizcounter = 0 
-    LASTQUESTIONINDEX = 7
+    FIRSTQUESTIONINDEX = 1
+    LASTQUESTIONINDEX = 11
+
     #Setup for Quiz Questions 
     for question in questions:
         #Answer Default Value
@@ -365,7 +363,7 @@ def main():
         questionLabel.pack(anchor='w', pady=20, padx=20)
 
         quizLabel = tk.Label(quiz, text="Please make a selection", font=("Lucida Sans", 12))
-        counter = 0
+        counter = 0                
         
         #if radio button:
         if question['questionType'] == "Radiobuttons":
@@ -385,12 +383,11 @@ def main():
                 radio_button.pack(anchor='w', pady=5, padx=20)
                 if counter < len(question['attribute']):
                     counter += 1
-            
-            
+
             # Submit Button for the Quiz
-            if quizcounter == LASTQUESTIONINDEX: 
-                button = tk.Button(quiz, text="Submit", command=checkQuiz)
-                button.pack()
+            if quizcounter == LASTQUESTIONINDEX - 1: 
+                submitQuizButton = tk.Button(quiz, text="Submit", command=checkQuiz,  bg='red', fg='white', font=("Lucida Sans", 14), padx=5, pady=5)
+                submitQuizButton.pack(side="right", padx=75, pady=5)
                 
             quizcounter += 1
         elif question['questionType'] == "Checkboxes":
@@ -400,7 +397,7 @@ def main():
                 checkVar.append(var)
                 checkbox = tk.Checkbutton(quiz, text=answer, font=("Lucida Sans", 12), variable=var, onvalue=answer, offvalue="Nothing", command=selectOption(question['questionType']))
                 checkbox.pack(anchor='w', pady=5, padx=20)
-                
+            quizcounter += 1    
         elif question['questionType'] == "Slider":
             # sliderLabel = tk.Label(quiz, text="Slider questions not ready yet", font=("Lucida Sans", 12))
             # sliderLabel.pack(pady=10)
@@ -411,9 +408,10 @@ def main():
             #Used to update the slider
             submitbutton = tk.Button(quiz, text="Submit the Year", command=lambda: func.updateYear(slider))
             submitbutton.pack()
-            
+
+            quizcounter += 1
         # Show answer
-        quizLabel.pack(pady=10)
+        # quizLabel.pack(pady=10)
         quizFrames.append(quiz)
 
         nextButton = tk.Button(quiz, text="Next", command=lambda index=len(quizFrames)-1: goNext(index), bg='black', fg='white', font=("Lucida Sans", 14), padx=5, pady=5)
@@ -421,10 +419,129 @@ def main():
 
         nextButton.pack(side="right", padx=75, pady=5)
         backButton.pack(side="left", padx=75, pady=5)
-        
+        if quizcounter == LASTQUESTIONINDEX: 
+            nextButton.pack_forget()
+        elif quizcounter == FIRSTQUESTIONINDEX:
+            backButton.pack_forget()
  
     addGenreSearch = set()
+
+
+
+    #QUIZ RESULT COMPONENTS
     
+    songSuggestions = [
+        {
+            "title": "a song",
+            "artist": "an artist",
+            "release_date": "a date",
+            "genre": "a genre"
+        },
+        {
+            "title": "another song",
+            "artist": "another artist",
+            "release_date": "another date",
+            "genre": "another genre"
+        },
+        {
+            "title": "third song",
+            "artist": "third artist",
+            "release_date": "third date",
+            "genre": "third genre"
+        },
+        {
+            "title": "fourth song",
+            "artist": "fourth artist",
+            "release_date": "fourth date",
+            "genre": "fourth genre"
+        },
+        {
+            "title": "fifth song",
+            "artist": "an artist",
+            "release_date": "a date",
+            "genre": "a genre"
+        },
+        {
+            "title": "sixth song",
+            "artist": "another artist",
+            "release_date": "another date",
+            "genre": "another genre"
+        },
+        {
+            "title": "seventh song",
+            "artist": "third artist",
+            "release_date": "third date",
+            "genre": "third genre"
+        },
+        {
+            "title": "eighth song",
+            "artist": "fourth artist",
+            "release_date": "fourth date",
+            "genre": "fourth genre"
+        },
+    ]
+
+    # starting index
+    startIndex = 0
+
+    def loadSongs(startIndex):
+        # Clear the current frame content
+        for frame in quizResults.winfo_children():
+            frame.grid_forget()
+        
+        # Set the current row to start rendering songs
+        quizTitleRow = 0
+        quizTitleCol = 0
+        currentRow = quizTitleRow + 1
+        
+        # Loop through and load the current set of songs
+        for i in range(startIndex, min(startIndex + 4, len(songSuggestions))): 
+            
+            #Home button
+            quizHomeButton = tk.Button(quizResults, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
+            quizHomeButton.grid(sticky = "w", row = quizTitleRow, column = quizTitleCol, pady=20, padx=20)
+            
+            #Quiz results label
+            quizResultsTitle = tk.Label(quizResults, text="Song Suggestions", font=("Georgia", 25, "bold"))
+            quizResultsTitle.grid(row = quizTitleRow, column = quizTitleCol + 1, pady=5, padx=20, columnspan = 100)
+            song = songSuggestions[i]
+            column = (i % 2)
+
+            songName = tk.Label(quizResults, text=f"{i + 1}. {song['title']}", font=("Lucida Sans", 14, "bold"))
+            songName.grid(row=currentRow, column=column * 2, pady=(25, 10), padx=20)
+
+            artistName = tk.Label(quizResults, text=f"Artist: {song['artist']}", font=("Lucida Sans", 12))
+            artistName.grid(row=currentRow + 1, column=column * 2, pady=5, padx=20)
+
+            releaseName = tk.Label(quizResults, text=f"Release Date: {song['release_date']}", font=("Lucida Sans", 12))
+            releaseName.grid(row=currentRow + 2, column=column * 2, pady=5, padx=20)
+
+            genreName = tk.Label(quizResults, text=f"Genre: {song['genre']}", font=("Lucida Sans", 12))
+            genreName.grid(row=currentRow + 3, column=column * 2, pady=5, padx=20)
+
+            addPlaylistButton = tk.Button(quizResults, text="Add to Playlist", bg='white', fg='black', font=("Lucida Sans", 12))
+            addPlaylistButton.grid(row=currentRow + 4, column=column * 2, pady=20, padx=20)
+
+            if column == 1:
+                currentRow += 5
+
+        # Add "Next" button
+        if startIndex + 4 < len(songSuggestions):
+            nextSongsbutton = tk.Button(quizResults, text="Next", command=lambda: loadNextFrame(startIndex, startIndex + 4), bg='black', fg='white', font=("Lucida Sans", 14))
+            nextSongsbutton.grid(row=currentRow, column=1, pady=20, padx=20)
+
+        # Add "Back" button
+        if startIndex > 0:
+            backSongsButton = tk.Button(quizResults, text="Back", command=lambda: loadNextFrame(startIndex, startIndex - 4), bg='black', fg='white', font=("Lucida Sans", 14))
+            backSongsButton.grid(row=currentRow, column=0, pady=20, padx=20)
+
+    def loadNextFrame(startIndex, newStartIndex):
+        startIndex = newStartIndex
+        loadSongs(startIndex)
+
+    # Load first set of songs
+    loadSongs(startIndex)
+
     #SEARCH COMPONENTS
     titleRow = 0
     titleCol = 0
