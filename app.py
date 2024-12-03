@@ -882,8 +882,8 @@ def main():
         {"song": "twentieth song", "artist": "twentieth artist"}
     ]
 
-    currentFrame = 0
-    results = 10
+    plCurrentFrame = 0
+    plResults = 10
 
     # Display search results per page
     def displayPlaylistResults(page):
@@ -892,8 +892,8 @@ def main():
             widget.grid_forget()
 
         # Start and end index for current page
-        startIndex = page * results
-        endIndex = min(startIndex + results, len(playlistResults))
+        startIndex = page * plResults
+        endIndex = min(startIndex + plResults, len(playlistResults))
         playlistRow = 0
         playlistCol = 0
 
@@ -901,7 +901,7 @@ def main():
         plHomeButton = tk.Button(playlist, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
         plHomeButton.grid(row=playlistRow, column=playlistCol, pady=20, padx=20, sticky="w", columnspan=100)
 
-        # Search results title
+        # playlist title
         plTitle = tk.Label(playlist, text="Spotify Playlist", font=("Georgia", 25, "bold"))
         plTitle.grid(row=playlistRow, column=playlistCol + 1, pady=5, padx=20, columnspan=100, sticky="NESW")
         playlistRow += 1
@@ -924,24 +924,24 @@ def main():
 
         # Back Button
         if page > 0:
-            plBack = tk.Button(playlist, text="Back", command=lambda: changePLFrame(page - 1, currentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
+            plBack = tk.Button(playlist, text="Back", command=lambda: changePLFrame(page - 1, plCurrentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
             plBack.grid(row=buttonRow, column=buttonCol, padx=75, pady=30, columnspan=2, sticky="w")
 
         # Next Button
         if endIndex < len(playlistResults):
-            plNext = tk.Button(playlist, text="Next", command=lambda: changePLFrame(page + 1, currentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
+            plNext = tk.Button(playlist, text="Next", command=lambda: changePLFrame(page + 1, plCurrentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
             plNext.grid(row=buttonRow, column=buttonCol + 1, padx=75, pady=30, columnspan=2, sticky="e")
 
     # Delete 
     def deleteSong(index, playlistResults):
         playlistResults.pop(index) 
-        playlistResults(currentFrame) 
+        playlistResults(plCurrentFrame) 
 
-    def changePLFrame(page, currentFrame):
-        currentFrame = page
-        displayPlaylistResults(currentFrame)
+    def changePLFrame(page, plCurrentFrame):
+        plCurrentFrame = page
+        displayPlaylistResults(plCurrentFrame)
 
-    displayPlaylistResults(currentFrame)
+    displayPlaylistResults(plCurrentFrame)
 
 
     # Show Home page initially
