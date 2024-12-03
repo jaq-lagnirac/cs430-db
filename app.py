@@ -16,6 +16,7 @@ def main():
         randomSong.pack_forget()
         playlist.pack_forget()
         quizResults.pack_forget()
+        searchResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -40,6 +41,7 @@ def main():
         randomSong.pack_forget()
         playlist.pack_forget()
         quizResults.pack_forget()
+        searchResults.pack_forget()
         if quizFrames:
             quizFrames[0].pack(fill="both", expand=True)
 
@@ -49,6 +51,7 @@ def main():
         search.pack_forget()
         randomSong.pack_forget()
         playlist.pack_forget()
+        searchResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -59,6 +62,7 @@ def main():
         randomSong.pack_forget()
         playlist.pack_forget()
         quizResults.pack_forget()
+        searchResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -69,6 +73,7 @@ def main():
         search.pack_forget()
         playlist.pack_forget()
         quizResults.pack_forget()
+        searchResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -82,6 +87,18 @@ def main():
         search.pack_forget()
         randomSong.pack_forget()
         quizResults.pack_forget()
+        searchResults.pack_forget()
+        if quizFrames:
+            for frame in quizFrames:
+                frame.pack_forget()
+
+    def showSearchResults():
+        searchResults.pack(fill="both", expand=True)
+        home.pack_forget()
+        search.pack_forget()
+        randomSong.pack_forget()
+        quizResults.pack_forget()
+        playlist.pack_forget()
         if quizFrames:
             for frame in quizFrames:
                 frame.pack_forget()
@@ -186,6 +203,7 @@ def main():
         #print(filterChoices)
 
     def goSearch():
+        showSearchResults()
         #search for the songs based on input
         #replace this code with searching function:
         '''
@@ -243,6 +261,7 @@ def main():
     randomSong = tk.Frame(root)
     playlist = tk.Frame(root)
     quizResults = tk.Frame(root)
+    searchResults = tk.Frame(root)
 
     #HOME PAGE COMPONENTS
     truifyLabel = tk.Label(home, text="Truify", font=("Lucida Sans", 24, "bold"))
@@ -484,6 +503,18 @@ def main():
             "release_date": "fourth date",
             "genre": "fourth genre"
         },
+        {
+            "title": "ninth song",
+            "artist": "third artist",
+            "release_date": "third date",
+            "genre": "third genre"
+        },
+        {
+            "title": "tenth song",
+            "artist": "fourth artist",
+            "release_date": "fourth date",
+            "genre": "fourth genre"
+        },
     ]
 
     # starting index
@@ -682,6 +713,84 @@ def main():
     searchButton = tk.Button(search, text="Search", command=goSearch, bg='white', fg='black', font=("Lucida Sans", 14), padx = 5, pady = 5)
     searchButton.grid(row = searchRow, column = searchCol, pady=20, padx=20, columnspan = 100)
 
+    #SEARCH RESULT COMPONENTS
+    searchResultsArray = [
+        {"song": "a song", "artist": "an artist"},
+        {"song": "another song", "artist": "another artist"},
+        {"song": "third song", "artist": "third artist"},
+        {"song": "fourth song", "artist": "fourth artist"},
+        {"song": "fifth song", "artist": "fifth artist"},
+        {"song": "sixth song", "artist": "sixth artist"},
+        {"song": "seventh song", "artist": "seventh artist"},
+        {"song": "eighth song", "artist": "eighth artist"},
+        {"song": "ninth song", "artist": "ninth artist"},
+        {"song": "tenth song", "artist": "tenth artist"},
+        {"song": "eleventh song", "artist": "eleventh artist"},
+        {"song": "twelfth song", "artist": "twelfth artist"},
+        {"song": "thirteenth song", "artist": "thirteenth artist"},
+        {"song": "fourteenth song", "artist": "fourteenth artist"},
+        {"song": "fifteenth song", "artist": "fifteenth artist"},
+        {"song": "sixteenth song", "artist": "sixteenth artist"},
+        {"song": "seventeenth song", "artist": "seventeenth artist"},
+        {"song": "eighteenth song", "artist": "eighteenth artist"},
+        {"song": "nineteenth song", "artist": "nineteenth artist"},
+        {"song": "twentieth song", "artist": "twentieth artist"}
+    ]
+
+    currentFrame = 0
+    results = 6
+
+    # Display search results per page
+    def searchResultsPerPage(page):
+        # Clear frames
+        for widget in searchResults.winfo_children():
+            widget.grid_forget()
+
+        # Start and end index for current page
+        startIndex = page * results
+        endIndex = min(startIndex + results, len(searchResultsArray))
+        searchResultRow = 0
+        searchResultCol = 0
+
+        # Home button
+        searchHomeButton = tk.Button(searchResults, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
+        searchHomeButton.grid(row=searchResultRow, column=searchResultCol, pady=20, padx=20, sticky="w")
+
+        # Search results title
+        #I can NOT get this centered...
+        searchResultsTitle = tk.Label(searchResults, text="Search Results", font=("Georgia", 25, "bold"))
+        searchResultsTitle.grid(row=searchResultRow, column=searchResultCol + 1, pady=5, padx=20, columnspan=100, sticky="NESW")
+        searchResultRow += 1
+
+        # Display results for current page
+        for i, result in enumerate(searchResultsArray[startIndex:endIndex]):
+            # Result label
+            resultLabel = tk.Label(searchResults, text=f"{startIndex + i + 1}. {result['song']} by {result['artist']}", font=("Lucida Sans", 12), pady=10, padx=30)
+            resultLabel.grid(row=searchResultRow, column=searchResultCol, pady=10, padx=20, sticky="w")
+            
+            searchResultRow += 1
+
+        # Button row
+        buttonRow = searchResultRow
+        buttonCol = searchResultCol
+
+        # Back Button
+        if page > 0:
+            searchBack = tk.Button(searchResults, text="Back", command=lambda: changeSearchFrame(page - 1, currentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
+            searchBack.grid(row=buttonRow, column=buttonCol, padx=75, pady=5, columnspan=2, sticky="w")
+
+        # Next Button
+        if endIndex < len(searchResultsArray):
+            searchNext = tk.Button(searchResults, text="Next", command=lambda: changeSearchFrame(page + 1, currentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
+            searchNext.grid(row=buttonRow, column=searchResultCol + 1, padx=75, pady=5, columnspan=2, sticky="e")
+
+    # change frames
+    def changeSearchFrame(page, currentFrame):
+        currentFrame = page
+        searchResultsPerPage(currentFrame)
+
+    searchResultsPerPage(currentFrame)
+
     #RANDOM SONG COMPONENTS
     global randCounter
     randCounter = 0
@@ -749,7 +858,7 @@ def main():
 
     # Show Home page initially
     showHomePage()
-    
+
     # Start the GUI event loop
     root.mainloop()
    
