@@ -299,56 +299,59 @@ def main():
         Function to display the results of the filtered song search.
         It will display song name and artist only.
         """
-        print(f"Displaying search results for {len(songs)} songs")
+        if songs is None:
+            messagebox.showerror("Error", "No search results found.")
+        else:
+            print(f"Displaying search results for {len(songs)} songs")
 
-        # Clear previous content in the searchResults frame
-        for widget in searchResults.winfo_children():
-            widget.grid_forget()  # Removes widgets managed by grid
+            # Clear previous content in the searchResults frame
+            for widget in searchResults.winfo_children():
+                widget.grid_forget()  # Removes widgets managed by grid
 
-        # Create a container frame for the list of songs
-        resultsFrame = tk.Frame(searchResults, bg='#f5f5f5', padx=20, pady=20)
-        resultsFrame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)  # Use grid for positioning the frame
+            # Create a container frame for the list of songs
+            resultsFrame = tk.Frame(searchResults, bg='#f5f5f5', padx=20, pady=20)
+            resultsFrame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)  # Use grid for positioning the frame
 
-        # Adjust column/row weights for centering and scrolling
-        searchResults.grid_rowconfigure(0, weight=1, minsize=100)
-        searchResults.grid_columnconfigure(0, weight=1)
+            # Adjust column/row weights for centering and scrolling
+            searchResults.grid_rowconfigure(0, weight=1, minsize=100)
+            searchResults.grid_columnconfigure(0, weight=1)
 
-        # Create a canvas for scrolling if there are many songs
-        canvas = tk.Canvas(resultsFrame)
-        scroll_y = tk.Scrollbar(resultsFrame, orient="vertical", command=canvas.yview)
-        canvas.configure(yscrollcommand=scroll_y.set)
+            # Create a canvas for scrolling if there are many songs
+            canvas = tk.Canvas(resultsFrame)
+            scroll_y = tk.Scrollbar(resultsFrame, orient="vertical", command=canvas.yview)
+            canvas.configure(yscrollcommand=scroll_y.set)
 
-        # Create a frame within the canvas for the actual song labels
-        songListFrame = tk.Frame(canvas, bg='#f5f5f5')
+            # Create a frame within the canvas for the actual song labels
+            songListFrame = tk.Frame(canvas, bg='#f5f5f5')
 
-        # Add the song list frame to the canvas
-        canvas.create_window((0, 0), window=songListFrame, anchor="nw")
+            # Add the song list frame to the canvas
+            canvas.create_window((0, 0), window=songListFrame, anchor="nw")
 
-        # Pack the canvas and scrollbar within the resultsFrame
-        canvas.grid(row=0, column=0, sticky="nsew")  # Stretch the canvas horizontally and vertically
-        scroll_y.grid(row=0, column=1, sticky="ns")  # Stretch the scrollbar vertically
+            # Pack the canvas and scrollbar within the resultsFrame
+            canvas.grid(row=0, column=0, sticky="nsew")  # Stretch the canvas horizontally and vertically
+            scroll_y.grid(row=0, column=1, sticky="ns")  # Stretch the scrollbar vertically
 
-        # Populate the song labels with numbers on the side
-        for idx, song in enumerate(songs, start=1):
-            # Create a label for each song with a number on the left
-            songText = f"{idx}. {song['song']} by {song['artist']}"
-            songLabel = tk.Label(songListFrame, text=songText, font=("Lucida Sans", 14), bg='#f5f5f5', anchor="w", padx=10, pady=10)
+            # Populate the song labels with numbers on the side
+            for idx, song in enumerate(songs, start=1):
+                # Create a label for each song with a number on the left
+                songText = f"{idx}. {song['song']} by {song['artist']}"
+                songLabel = tk.Label(songListFrame, text=songText, font=("Lucida Sans", 14), bg='#f5f5f5', anchor="w", padx=10, pady=10)
 
-            # Add a hover effect to the song labels for better interactivity
-            songLabel.bind("<Enter>", lambda event, label=songLabel: label.config(bg="#e0e0e0"))
-            songLabel.bind("<Leave>", lambda event, label=songLabel: label.config(bg="#f5f5f5"))
+                # Add a hover effect to the song labels for better interactivity
+                songLabel.bind("<Enter>", lambda event, label=songLabel: label.config(bg="#e0e0e0"))
+                songLabel.bind("<Leave>", lambda event, label=songLabel: label.config(bg="#f5f5f5"))
 
-            songLabel.grid(row=idx-1, column=0, sticky="w", padx=10, pady=5)  # Using grid instead of pack
+                songLabel.grid(row=idx-1, column=0, sticky="w", padx=10, pady=5)  # Using grid instead of pack
 
-        # Update the scroll region to fit the content
-        songListFrame.update_idletasks()
-        canvas.config(scrollregion=canvas.bbox("all"))
+            # Update the scroll region to fit the content
+            songListFrame.update_idletasks()
+            canvas.config(scrollregion=canvas.bbox("all"))
 
-        # Home Button (using grid for layout)
-        homeButton = tk.Button(searchResults, text="Back", command=showHomePage, bg="black", fg="white", font=("Lucida Sans", 14))
-        homeButton.grid(row=1, column=0, pady=10, sticky="nsew")  # Placed below the song list and stretches across
+            # Home Button (using grid for layout)
+            homeButton = tk.Button(searchResults, text="Back", command=showHomePage, bg="black", fg="white", font=("Lucida Sans", 14))
+            homeButton.grid(row=1, column=0, pady=10, sticky="nsew")  # Placed below the song list and stretches across
 
-        showSearchResults()
+            showSearchResults()
 
 
     def goSearch():
