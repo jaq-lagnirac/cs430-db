@@ -292,7 +292,7 @@ def main():
 
         except Exception as e:
             print("An unexpected error occurred:", e)
-            messagebox.showerror("Error", "You entered a value that is not a number. OR You have not set a Max Year and Max Length")
+            messagebox.showerror("Error", "You entered a value that is not a number. OR You have not set a Max Year, Max Length, Max Danceability and Max Tempo")
 
     def displaySongResults(songs):
         """
@@ -315,6 +315,10 @@ def main():
             # Adjust column/row weights for centering and scrolling
             searchResults.grid_rowconfigure(0, weight=1, minsize=100)
             searchResults.grid_columnconfigure(0, weight=1)
+
+            # Adjust column/row weights for centering and scrolling
+            resultsFrame.grid_rowconfigure(0, weight=1, minsize=100)
+            resultsFrame.grid_columnconfigure(0, weight=1)
 
             # Create a canvas for scrolling if there are many songs
             canvas = tk.Canvas(resultsFrame)
