@@ -439,7 +439,13 @@ def main():
 
         # Create a frame to hold the list of songs
         artistSongsFrame = tk.Frame(searchResults, bg='#f5f5f5', padx=20, pady=20)
-        artistSongsFrame.pack(fill="both", expand=True, pady=(0, 20))  # Ensure the frame is packed with bottom padding
+        artistSongsFrame.grid(row=0, column=0, sticky="nsew", pady=(0, 20), columnspan = 100)  # Ensure the frame is packed with bottom padding
+
+        searchResults.grid_rowconfigure(0, weight=1)
+        searchResults.grid_columnconfigure(0, weight=1)
+
+        artistSongsFrame.grid_rowconfigure(0, weight=1)
+        artistSongsFrame.grid_columnconfigure(0, weight=1)
 
         # Create a canvas for scrolling if there are many songs
         canvas = tk.Canvas(artistSongsFrame)
@@ -453,8 +459,8 @@ def main():
         canvas.create_window((0, 0), window=songListFrame, anchor="nw")
 
         # Pack the canvas and scrollbar
-        canvas.pack(side="left", fill="both", expand=True)
-        scroll_y.pack(side="right", fill="y")
+        canvas.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        scroll_y.grid(row=0, column=1, sticky="ns")
 
         # Populate the song labels with numbers on the side
         for idx, song in enumerate(songs, start=1):
@@ -466,7 +472,7 @@ def main():
             songLabel.bind("<Enter>", lambda event, label=songLabel: label.config(bg="#e0e0e0"))
             songLabel.bind("<Leave>", lambda event, label=songLabel: label.config(bg="#f5f5f5"))
 
-            songLabel.pack(fill="x", pady=5)
+            songLabel.grid(row=idx-1, column=0, sticky="w", pady=5)
 
         # Update the scroll region to fit the content
         songListFrame.update_idletasks()
@@ -474,7 +480,7 @@ def main():
 
         # Create the Home (Back) button
         homeButton = tk.Button(searchResults, text="Back", command=showHomePage, bg="black", fg="white", font=("Lucida Sans", 14))
-        homeButton.pack(side="bottom", pady=10) 
+        homeButton.grid(row=1, column=0, pady=10)
 
         # Show the updated content
         showSearchResults()
