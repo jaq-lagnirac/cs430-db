@@ -14,7 +14,6 @@ def main():
         home.pack(fill="both", expand=True)
         search.pack_forget()
         randomSong.pack_forget()
-        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -39,7 +38,6 @@ def main():
         home.pack_forget()
         search.pack_forget()
         randomSong.pack_forget()
-        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -50,7 +48,6 @@ def main():
         home.pack_forget()
         search.pack_forget()
         randomSong.pack_forget()
-        #playlist.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
@@ -60,7 +57,6 @@ def main():
         search.pack(fill="both", expand=True)
         home.pack_forget()
         randomSong.pack_forget()
-        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -80,20 +76,6 @@ def main():
 
         displayString.set("")
         randCounter = 0
-
-    #Not enough time
-    '''
-    def showPlaylist():
-        playlist.pack(fill="both", expand=True)
-        home.pack_forget()
-        search.pack_forget()
-        randomSong.pack_forget()
-        quizResults.pack_forget()
-        searchResults.pack_forget()
-        if quizFrames:
-            for frame in quizFrames:
-                frame.pack_forget()
-    '''
 
     def showSearchResults():
         searchResults.pack(fill="both", expand=True)
@@ -924,121 +906,9 @@ def main():
         bg="black", fg="white", font=("Lucida Sans", 14)
     ).pack(side="bottom", pady=10)
     
-
-    # NOT ENOUGH TIME TO DO
-    '''
-    #PLAYLIST COMPONENTS
-    playlistResults = [
-        {"song": "a song", "artist": "an artist"},
-        {"song": "another song", "artist": "another artist"},
-        {"song": "third song", "artist": "third artist"},
-        {"song": "fourth song", "artist": "fourth artist"},
-        {"song": "fifth song", "artist": "fifth artist"},
-        {"song": "sixth song", "artist": "sixth artist"},
-        {"song": "seventh song", "artist": "seventh artist"},
-        {"song": "eighth song", "artist": "eighth artist"},
-        {"song": "ninth song", "artist": "ninth artist"},
-        {"song": "tenth song", "artist": "tenth artist"},
-        {"song": "eleventh song", "artist": "eleventh artist"},
-        {"song": "twelfth song", "artist": "twelfth artist"},
-        {"song": "thirteenth song", "artist": "thirteenth artist"},
-        {"song": "fourteenth song", "artist": "fourteenth artist"},
-        {"song": "fifteenth song", "artist": "fifteenth artist"},
-        {"song": "sixteenth song", "artist": "sixteenth artist"},
-        {"song": "seventeenth song", "artist": "seventeenth artist"},
-        {"song": "eighteenth song", "artist": "eighteenth artist"},
-        {"song": "nineteenth song", "artist": "nineteenth artist"},
-        {"song": "twentieth song", "artist": "twentieth artist"}
-    ]
-
-    plCurrentFrame = 0
-    plResults = 10
-
-    # Display search results per page
-    def displayPlaylistResults(page):
-        # Clear frames
-        for widget in playlist.winfo_children():
-            widget.grid_forget()
-
-        # Start and end index for current page
-        startIndex = page * plResults
-        endIndex = min(startIndex + plResults, len(playlistResults))
-        playlistRow = 0
-        playlistCol = 0
-
-        # Home button
-        plHomeButton = tk.Button(playlist, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
-        plHomeButton.grid(row=playlistRow, column=playlistCol, pady=20, padx=20, sticky="w", columnspan=100)
-
-        # playlist title
-        plTitle = tk.Label(playlist, text="Spotify Playlist", font=("Georgia", 25, "bold"))
-        plTitle.grid(row=playlistRow, column=playlistCol + 1, pady=5, padx=20, columnspan=100, sticky="NESW")
-        playlistRow += 1
-
-        if len(playlistResults) > 0:
-            # Display results for current page
-            for i, result in enumerate(playlistResults[startIndex:endIndex]):
-                # Result label
-                songLabel = tk.Label(playlist, text=f"{startIndex + i + 1}. {result['song']} by {result['artist']}", font=("Lucida Sans", 12), pady=10, padx=30)
-                songLabel.grid(row=playlistRow, column=playlistCol, pady=2, padx=20, sticky="w")
-
-                # Delete Button
-                deleteButton = tk.Button(playlist, text="Delete", command=lambda index=startIndex + i: deleteSong(index), bg='red', fg='white', font=("Lucida Sans", 10))
-                deleteButton.grid(row=playlistRow, column=playlistCol + 1, pady=10, padx=20, sticky="e", columnspan = 100)
-
-                playlistRow += 1
-        else:
-            songLabel = tk.Label(playlist, text="No results found.", font=("Lucida Sans", 12), pady=10, padx=30)
-            songLabel.grid(row=playlistRow, column=playlistCol, pady=2, padx=20, sticky="w")
-
-
-        # Button row
-        buttonRow = playlistRow
-        buttonCol = playlistCol
-
-        # Back Button
-        if page > 0:
-            plBack = tk.Button(playlist, text="Back", command=lambda: changePLFrame(page - 1, plCurrentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
-            plBack.grid(row=buttonRow, column=buttonCol, padx=75, pady=30, columnspan=2, sticky="w")
-
-        # Next Button
-        if endIndex < len(playlistResults):
-            plNext = tk.Button(playlist, text="Next", command=lambda: changePLFrame(page + 1, plCurrentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
-            plNext.grid(row=buttonRow, column=buttonCol + 1, padx=75, pady=30, columnspan=2, sticky="e")
-
-    # Delete 
-    def deleteSong(index, playlistResults):
-        playlistResults.pop(index) 
-        playlistResults(plCurrentFrame) 
-
-    def changePLFrame(page, plCurrentFrame):
-        plCurrentFrame = page
-        displayPlaylistResults(plCurrentFrame)
-
-    displayPlaylistResults(plCurrentFrame)
-    '''
-
     # Show Home page initially
     showHomePage()
     root.mainloop()
-    
-   
-    # Checks if the user answers are captured correctly
-    '''
-    # For the checkboxes
-    for x in checkVar:
-      print(x.get())
-    
-    # For the slider year
-    slide = func.sliderYear
-    for x in slide:
-        print(x)
-    
-    # For the radio Buttons   
-    for x in radioChosenAnswers:
-        print(x.get())
-    '''
-    
     
 main()
 
