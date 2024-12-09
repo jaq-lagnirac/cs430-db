@@ -372,6 +372,8 @@ def main():
             else:
                 # Handle no results
                 print("No matching songs found")
+                messagebox.showerror("Error", "No matching songs found.")
+
 
     def displaySingleSongPage(song):
         """
