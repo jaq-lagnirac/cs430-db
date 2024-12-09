@@ -29,7 +29,6 @@ def main():
         home.pack(fill="both", expand=True)
         search.pack_forget()
         randomSong.pack_forget()
-        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -54,7 +53,6 @@ def main():
         home.pack_forget()
         search.pack_forget()
         randomSong.pack_forget()
-        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -65,7 +63,6 @@ def main():
         home.pack_forget()
         search.pack_forget()
         randomSong.pack_forget()
-        #playlist.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
             for frame in quizFrames:
@@ -75,7 +72,6 @@ def main():
         search.pack(fill="both", expand=True)
         home.pack_forget()
         randomSong.pack_forget()
-        #playlist.pack_forget()
         quizResults.pack_forget()
         searchResults.pack_forget()
         if quizFrames:
@@ -95,20 +91,6 @@ def main():
 
         displayString.set("")
         randCounter = 0
-
-    #Not enough time
-    '''
-    def showPlaylist():
-        playlist.pack(fill="both", expand=True)
-        home.pack_forget()
-        search.pack_forget()
-        randomSong.pack_forget()
-        quizResults.pack_forget()
-        searchResults.pack_forget()
-        if quizFrames:
-            for frame in quizFrames:
-                frame.pack_forget()
-    '''
 
     def showSearchResults():
         searchResults.pack(fill="both", expand=True)
@@ -317,63 +299,70 @@ def main():
 
         except Exception as e:
             print("An unexpected error occurred:", e)
-            messagebox.showerror("Error", "You entered a value that is not a number. OR You have not set a Max Year and Max Length")
+            messagebox.showerror("Error", "You entered a value that is not a number. OR You have not set a Max Year, Max Length, Max Danceability and Max Tempo")
 
     def displaySongResults(songs):
         """
         Function to display the results of the filtered song search.
         It will display song name and artist only.
         """
-        print(f"Displaying search results for {len(songs)} songs")
+        if songs is None:
+            messagebox.showerror("Error", "No search results found.")
+        else:
+            print(f"Displaying search results for {len(songs)} songs")
 
-        # Clear previous content in the searchResults frame
-        for widget in searchResults.winfo_children():
-            widget.grid_forget()  # Removes widgets managed by grid
+            # Clear previous content in the searchResults frame
+            for widget in searchResults.winfo_children():
+                widget.grid_forget()  # Removes widgets managed by grid
 
-        # Create a container frame for the list of songs
-        resultsFrame = tk.Frame(searchResults, bg='#f5f5f5', padx=20, pady=20)
-        resultsFrame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)  # Use grid for positioning the frame
+            # Create a container frame for the list of songs
+            resultsFrame = tk.Frame(searchResults, bg='#f5f5f5', padx=20, pady=20)
+            resultsFrame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)  # Use grid for positioning the frame
 
-        # Adjust column/row weights for centering and scrolling
-        searchResults.grid_rowconfigure(0, weight=1, minsize=100)
-        searchResults.grid_columnconfigure(0, weight=1)
+            # Adjust column/row weights for centering and scrolling
+            searchResults.grid_rowconfigure(0, weight=1, minsize=100)
+            searchResults.grid_columnconfigure(0, weight=1)
 
-        # Create a canvas for scrolling if there are many songs
-        canvas = tk.Canvas(resultsFrame)
-        scroll_y = tk.Scrollbar(resultsFrame, orient="vertical", command=canvas.yview)
-        canvas.configure(yscrollcommand=scroll_y.set)
+            # Adjust column/row weights for centering and scrolling
+            resultsFrame.grid_rowconfigure(0, weight=1, minsize=100)
+            resultsFrame.grid_columnconfigure(0, weight=1)
 
-        # Create a frame within the canvas for the actual song labels
-        songListFrame = tk.Frame(canvas, bg='#f5f5f5')
+            # Create a canvas for scrolling if there are many songs
+            canvas = tk.Canvas(resultsFrame)
+            scroll_y = tk.Scrollbar(resultsFrame, orient="vertical", command=canvas.yview)
+            canvas.configure(yscrollcommand=scroll_y.set)
 
-        # Add the song list frame to the canvas
-        canvas.create_window((0, 0), window=songListFrame, anchor="nw")
+            # Create a frame within the canvas for the actual song labels
+            songListFrame = tk.Frame(canvas, bg='#f5f5f5')
 
-        # Pack the canvas and scrollbar within the resultsFrame
-        canvas.grid(row=0, column=0, sticky="nsew")  # Stretch the canvas horizontally and vertically
-        scroll_y.grid(row=0, column=1, sticky="ns")  # Stretch the scrollbar vertically
+            # Add the song list frame to the canvas
+            canvas.create_window((0, 0), window=songListFrame, anchor="nw")
 
-        # Populate the song labels with numbers on the side
-        for idx, song in enumerate(songs, start=1):
-            # Create a label for each song with a number on the left
-            songText = f"{idx}. {song['song']} by {song['artist']}"
-            songLabel = tk.Label(songListFrame, text=songText, font=("Lucida Sans", 14), bg='#f5f5f5', anchor="w", padx=10, pady=10)
+            # Pack the canvas and scrollbar within the resultsFrame
+            canvas.grid(row=0, column=0, sticky="nsew")  # Stretch the canvas horizontally and vertically
+            scroll_y.grid(row=0, column=1, sticky="ns")  # Stretch the scrollbar vertically
 
-            # Add a hover effect to the song labels for better interactivity
-            songLabel.bind("<Enter>", lambda event, label=songLabel: label.config(bg="#e0e0e0"))
-            songLabel.bind("<Leave>", lambda event, label=songLabel: label.config(bg="#f5f5f5"))
+            # Populate the song labels with numbers on the side
+            for idx, song in enumerate(songs, start=1):
+                # Create a label for each song with a number on the left
+                songText = f"{idx}. {song['song']} by {song['artist']}"
+                songLabel = tk.Label(songListFrame, text=songText, font=("Lucida Sans", 14), bg='#f5f5f5', anchor="w", padx=10, pady=10)
 
-            songLabel.grid(row=idx-1, column=0, sticky="w", padx=10, pady=5)  # Using grid instead of pack
+                # Add a hover effect to the song labels for better interactivity
+                songLabel.bind("<Enter>", lambda event, label=songLabel: label.config(bg="#e0e0e0"))
+                songLabel.bind("<Leave>", lambda event, label=songLabel: label.config(bg="#f5f5f5"))
 
-        # Update the scroll region to fit the content
-        songListFrame.update_idletasks()
-        canvas.config(scrollregion=canvas.bbox("all"))
+                songLabel.grid(row=idx-1, column=0, sticky="w", padx=10, pady=5)  # Using grid instead of pack
 
-        # Home Button (using grid for layout)
-        homeButton = tk.Button(searchResults, text="Back", command=showHomePage, bg="black", fg="white", font=("Lucida Sans", 14))
-        homeButton.grid(row=1, column=0, pady=10, sticky="nsew")  # Placed below the song list and stretches across
+            # Update the scroll region to fit the content
+            songListFrame.update_idletasks()
+            canvas.config(scrollregion=canvas.bbox("all"))
 
-        showSearchResults()
+            # Home Button (using grid for layout)
+            homeButton = tk.Button(searchResults, text="Back", command=showHomePage, bg="black", fg="white", font=("Lucida Sans", 14))
+            homeButton.grid(row=1, column=0, pady=10, sticky="nsew")  # Placed below the song list and stretches across
+
+            showSearchResults()
 
 
     def goSearch():
@@ -408,6 +397,8 @@ def main():
             else:
                 # Handle no results
                 print("No matching songs found")
+                messagebox.showerror("Error", "No matching songs found.")
+
 
     def displaySingleSongPage(song):
         """
@@ -464,7 +455,13 @@ def main():
 
         # Create a frame to hold the list of songs
         artistSongsFrame = tk.Frame(searchResults, bg='#f5f5f5', padx=20, pady=20)
-        artistSongsFrame.pack(fill="both", expand=True, pady=(0, 20))  # Ensure the frame is packed with bottom padding
+        artistSongsFrame.grid(row=0, column=0, sticky="nsew", pady=(0, 20), columnspan = 100)  # Ensure the frame is packed with bottom padding
+
+        searchResults.grid_rowconfigure(0, weight=1)
+        searchResults.grid_columnconfigure(0, weight=1)
+
+        artistSongsFrame.grid_rowconfigure(0, weight=1)
+        artistSongsFrame.grid_columnconfigure(0, weight=1)
 
         # Create a canvas for scrolling if there are many songs
         canvas = tk.Canvas(artistSongsFrame)
@@ -478,8 +475,8 @@ def main():
         canvas.create_window((0, 0), window=songListFrame, anchor="nw")
 
         # Pack the canvas and scrollbar
-        canvas.pack(side="left", fill="both", expand=True)
-        scroll_y.pack(side="right", fill="y")
+        canvas.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        scroll_y.grid(row=0, column=1, sticky="ns")
 
         # Populate the song labels with numbers on the side
         for idx, song in enumerate(songs, start=1):
@@ -491,7 +488,7 @@ def main():
             songLabel.bind("<Enter>", lambda event, label=songLabel: label.config(bg="#e0e0e0"))
             songLabel.bind("<Leave>", lambda event, label=songLabel: label.config(bg="#f5f5f5"))
 
-            songLabel.pack(fill="x", pady=5)
+            songLabel.grid(row=idx-1, column=0, sticky="w", pady=5)
 
         # Update the scroll region to fit the content
         songListFrame.update_idletasks()
@@ -499,7 +496,7 @@ def main():
 
         # Create the Home (Back) button
         homeButton = tk.Button(searchResults, text="Back", command=showHomePage, bg="black", fg="white", font=("Lucida Sans", 14))
-        homeButton.pack(side="bottom", pady=10) 
+        homeButton.grid(row=1, column=0, pady=10)
 
         # Show the updated content
         showSearchResults()
@@ -936,120 +933,9 @@ def main():
         bg="black", fg="white", font=("Lucida Sans", 14)
     ).pack(side="bottom", pady=10)
     
-
-    # NOT ENOUGH TIME TO DO
-    '''
-    #PLAYLIST COMPONENTS
-    playlistResults = [
-        {"song": "a song", "artist": "an artist"},
-        {"song": "another song", "artist": "another artist"},
-        {"song": "third song", "artist": "third artist"},
-        {"song": "fourth song", "artist": "fourth artist"},
-        {"song": "fifth song", "artist": "fifth artist"},
-        {"song": "sixth song", "artist": "sixth artist"},
-        {"song": "seventh song", "artist": "seventh artist"},
-        {"song": "eighth song", "artist": "eighth artist"},
-        {"song": "ninth song", "artist": "ninth artist"},
-        {"song": "tenth song", "artist": "tenth artist"},
-        {"song": "eleventh song", "artist": "eleventh artist"},
-        {"song": "twelfth song", "artist": "twelfth artist"},
-        {"song": "thirteenth song", "artist": "thirteenth artist"},
-        {"song": "fourteenth song", "artist": "fourteenth artist"},
-        {"song": "fifteenth song", "artist": "fifteenth artist"},
-        {"song": "sixteenth song", "artist": "sixteenth artist"},
-        {"song": "seventeenth song", "artist": "seventeenth artist"},
-        {"song": "eighteenth song", "artist": "eighteenth artist"},
-        {"song": "nineteenth song", "artist": "nineteenth artist"},
-        {"song": "twentieth song", "artist": "twentieth artist"}
-    ]
-
-    plCurrentFrame = 0
-    plResults = 10
-
-    # Display search results per page
-    def displayPlaylistResults(page):
-        # Clear frames
-        for widget in playlist.winfo_children():
-            widget.grid_forget()
-
-        # Start and end index for current page
-        startIndex = page * plResults
-        endIndex = min(startIndex + plResults, len(playlistResults))
-        playlistRow = 0
-        playlistCol = 0
-
-        # Home button
-        plHomeButton = tk.Button(playlist, text="Home", command=showHomePage, bg='white', fg='black', font=("Lucida Sans", 12))
-        plHomeButton.grid(row=playlistRow, column=playlistCol, pady=20, padx=20, sticky="w", columnspan=100)
-
-        # playlist title
-        plTitle = tk.Label(playlist, text="Spotify Playlist", font=("Georgia", 25, "bold"))
-        plTitle.grid(row=playlistRow, column=playlistCol + 1, pady=5, padx=20, columnspan=100, sticky="NESW")
-        playlistRow += 1
-
-        if len(playlistResults) > 0:
-            # Display results for current page
-            for i, result in enumerate(playlistResults[startIndex:endIndex]):
-                # Result label
-                songLabel = tk.Label(playlist, text=f"{startIndex + i + 1}. {result['song']} by {result['artist']}", font=("Lucida Sans", 12), pady=10, padx=30)
-                songLabel.grid(row=playlistRow, column=playlistCol, pady=2, padx=20, sticky="w")
-
-                # Delete Button
-                deleteButton = tk.Button(playlist, text="Delete", command=lambda index=startIndex + i: deleteSong(index), bg='red', fg='white', font=("Lucida Sans", 10))
-                deleteButton.grid(row=playlistRow, column=playlistCol + 1, pady=10, padx=20, sticky="e", columnspan = 100)
-
-                playlistRow += 1
-        else:
-            songLabel = tk.Label(playlist, text="No results found.", font=("Lucida Sans", 12), pady=10, padx=30)
-            songLabel.grid(row=playlistRow, column=playlistCol, pady=2, padx=20, sticky="w")
-
-
-        # Button row
-        buttonRow = playlistRow
-        buttonCol = playlistCol
-
-        # Back Button
-        if page > 0:
-            plBack = tk.Button(playlist, text="Back", command=lambda: changePLFrame(page - 1, plCurrentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
-            plBack.grid(row=buttonRow, column=buttonCol, padx=75, pady=30, columnspan=2, sticky="w")
-
-        # Next Button
-        if endIndex < len(playlistResults):
-            plNext = tk.Button(playlist, text="Next", command=lambda: changePLFrame(page + 1, plCurrentFrame), bg='black', fg='white', font=("Lucida Sans", 14))
-            plNext.grid(row=buttonRow, column=buttonCol + 1, padx=75, pady=30, columnspan=2, sticky="e")
-
-    # Delete 
-    def deleteSong(index, playlistResults):
-        playlistResults.pop(index) 
-        playlistResults(plCurrentFrame) 
-
-    def changePLFrame(page, plCurrentFrame):
-        plCurrentFrame = page
-        displayPlaylistResults(plCurrentFrame)
-
-    displayPlaylistResults(plCurrentFrame)
-    '''
-
     # Show Home page initially
     showHomePage()
     root.mainloop()
-    
-   
-    # Checks if the user answers are captured correctly
-    '''
-    # For the checkboxes
-    for x in checkVar:
-      print(x.get())
-    
-    # For the slider year
-    slide = func.sliderYear
-    for x in slide:
-        print(x)
-    
-    # For the radio Buttons   
-    for x in radioChosenAnswers:
-        print(x.get())
-    '''
     
 if __name__ == '__main__':
     # starts up Spotify API server
